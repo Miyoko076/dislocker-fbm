@@ -31,9 +31,14 @@
 #include <stddef.h>
 #include "dislocker/metadata/datums.h"   /* for datum_header_safe_t, DATUMS_VALUE_VIRTUALIZATION_INFO */
 
-#include <sys/ioctl.h>
-
-#define BLKSSZGET  _IO(0x12,104)/* get block device sector size */
+#ifdef _WIN32
+#  include <windows.h>
+#  include <winioctl.h>
+#  include <io.h>       /* for _get_osfhandle */
+#else
+#  include <sys/ioctl.h>
+#  define BLKSSZGET  _IO(0x12,104)/* get block device sector size */
+#endif
 
 /*
  * On Darwin and FreeBSD, files are opened using 64 bits offsets/variables
@@ -230,7 +235,27 @@ int dis_metadata_initialize(dis_metadata_t dis_meta)
 	//Windows 10 1903 exFAT
 	if (!dis_meta->volume_header->sector_size) {
 		uint64_t nSectorSize = 0;
+#ifdef _WIN32
+		/*
+		 * Windows has no POSIX ioctl(); query the disk geometry via
+		 * DeviceIoControl instead. The _EX variant works on both MBR and
+		 * GPT media. BytesPerSector is the logical sector size, matching
+		 * what BLKSSZGET returns on Linux. Only works on physical drives
+		 * (e.g. \\.\PhysicalDrive0); on plain image files it fails and we
+		 * fall back to 512 below, exactly as Linux does on a regular file.
+		 */
+		HANDLE hDisk = (HANDLE)_get_osfhandle(dis_meta_cfg->fve_fd);
+		if (hDisk != INVALID_HANDLE_VALUE) {
+			DISK_GEOMETRY_EX dg;
+			DWORD bytesReturned;
+			if (DeviceIoControl(hDisk, IOCTL_DISK_GET_DRIVE_GEOMETRY_EX,
+			                    NULL, 0, &dg, sizeof(dg),
+			                    &bytesReturned, NULL))
+				nSectorSize = dg.Geometry.BytesPerSector;
+		}
+#else
 		ioctl(dis_meta_cfg->fve_fd, BLKSSZGET, &nSectorSize);
+#endif
 		if(!nSectorSize)
 			nSectorSize = 512;
 		dis_meta->volume_header->sector_size = (uint16_t)nSectorSize;
