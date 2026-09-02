@@ -51,8 +51,12 @@
 #include <locale.h>
 
 #ifndef __DIS_CORE_DUMPS
-#include <sys/time.h>
-#include <sys/resource.h>
+#  ifdef _WIN32
+#    include <windows.h>
+#  else
+#    include <sys/time.h>
+#    include <sys/resource.h>
+#  endif
 #endif
 
 
@@ -79,6 +83,21 @@ dis_context_t dis_new()
 
 #ifndef __DIS_CORE_DUMPS
 	/* As we manage passwords and secrets, do not authorize core dumps */
+#  ifdef _WIN32
+	/*
+	 * Windows equivalent of setrlimit(RLIMIT_CORE, 0): tell the process not
+	 * to invoke Windows Error Reporting on a crash, which suppresses crash
+	 * dumps (and the event-log summary) that could leak secrets. Preserve any
+	 * flags the host process (e.g. a Python interpreter loading us as a .pyd)
+	 * already set by OR-ing onto the current mode.
+	 *
+	 * MSDN describes SEM_NOGPFAULTERRORBOX as only hiding the error dialog,
+	 * but in practice it disables WER for the process entirely (crash report,
+	 * event-log entry, and AeDebug post-mortem debugger).
+	 * See https://github.com/libuv/libuv/issues/1327
+	 */
+	SetErrorMode(GetErrorMode() | SEM_NOGPFAULTERRORBOX);
+#  else
 	struct rlimit limit;
 	limit.rlim_cur = 0;
 	limit.rlim_max = 0;
@@ -88,6 +107,7 @@ dis_context_t dis_new()
 		dis_free(dis_ctx);
 		return NULL;
 	}
+#  endif
 #endif
 
 	dis_ctx->fve_fd = -1;
