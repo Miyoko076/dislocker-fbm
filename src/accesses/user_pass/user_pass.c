@@ -27,7 +27,9 @@
 #include "dislocker/accesses/user_pass/user_pass.h"
 #include "dislocker/metadata/vmk.h"
 
+#ifdef DIS_INTERACTIVE_INPUT
 #include <termios.h>
+#endif
 #include <stdio.h>
 #include <unistd.h>
 
@@ -186,6 +188,7 @@ int get_vmk_from_user_pass2(dis_metadata_t dis_meta,
  * @param stream The FILE* from which to get the password
  * @return The number of bytes read
  */
+#ifdef DIS_INTERACTIVE_INPUT
 static ssize_t my_getpass(char **lineptr, FILE *stream)
 {
 	if(!lineptr || !stream)
@@ -235,6 +238,7 @@ static ssize_t my_getpass(char **lineptr, FILE *stream)
 
 	return nread;
 }
+#endif /* DIS_INTERACTIVE_INPUT */
 
 
 /**
@@ -352,6 +356,7 @@ int prompt_up(uint8_t** up)
 		*(tmp + nb_read + 1) = '\0';
 		*up = tmp;
 	}else{
+#ifdef DIS_INTERACTIVE_INPUT
 		/* There's no need for a prompt if we're doing tests */
 		#ifndef __CK_DOING_TESTS
 			printf("Enter the user password: ");
@@ -359,6 +364,14 @@ int prompt_up(uint8_t** up)
 		#endif /* __CK_DOING_TESTS */
 
 		nb_read = my_getpass((char**) up, stdin);
+#else
+		fprintf(stderr,
+			"Interactive password input is not supported in this build.\n"
+			"Use the Python bindings to run this operation, or pass the password\n"
+			"as a command-line argument (note: arguments are visible to other\n"
+			"processes, so only do this for personal/local use).\n");
+		return FALSE;
+#endif /* DIS_INTERACTIVE_INPUT */
 	}
 
 	if(nb_read <= 0)

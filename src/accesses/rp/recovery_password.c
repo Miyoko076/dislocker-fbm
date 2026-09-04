@@ -26,7 +26,9 @@
 
 #include "dislocker/accesses/rp/recovery_password.h"
 #include "dislocker/metadata/vmk.h"
+#ifdef DIS_INTERACTIVE_INPUT
 #include "dislocker/xstd/xsys_select.h"
+#endif
 
 
 
@@ -410,6 +412,7 @@ int intermediate_key(const uint8_t *recovery_password,
  */
 int prompt_rp(uint8_t** rp)
 {
+#ifdef DIS_INTERACTIVE_INPUT
 	// Check the parameter
 	if(!rp)
 		return FALSE;
@@ -574,6 +577,15 @@ int prompt_rp(uint8_t** rp)
 
 	close_input_fd();
 	return FALSE;
+#else
+	(void) rp;
+	fprintf(stderr,
+		"Interactive password input is not supported in this build.\n"
+		"Use the Python bindings to run this operation, or pass the password\n"
+		"as a command-line argument (note: arguments are visible to other\n"
+		"processes, so only do this for personal/local use).\n");
+	return FALSE;
+#endif
 }
 
 
