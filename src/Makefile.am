@@ -14,6 +14,9 @@ DIS_DEFINES = \
 	-D_FILE_OFFSET_BITS=64
 
 AM_CPPFLAGS = \
+	-include $(top_builddir)/config.h \
+	-I$(top_builddir)/lib \
+	-I$(top_srcdir)/lib \
 	-I$(top_srcdir)/include \
 	$(DIS_DEFINES) \
 	@CRYPTO_CFLAGS@ @FUSE_CFLAGS@ @RUBY_CFLAGS@
@@ -60,6 +63,7 @@ libdislocker_la_LDFLAGS = \
 	-version-number $(VERSION_MAJOR):$(VERSION_MINOR):$(VERSION_RELEASE) \
 	@DIS_OS_LDFLAGS@ @DIS_HARDEN_LDFLAGS@
 libdislocker_la_LIBADD = \
+	$(top_builddir)/lib/libgnu.la \
 	@PTHREAD_LIBS@ @CRYPTO_LIBS@ @DIS_OS_LIBS@ @RUBY_LIBS@
 
 bin_PROGRAMS = dislocker-file dislocker-metadata dislocker-bek

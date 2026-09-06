@@ -2,9 +2,11 @@
 
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = src test
+# lib (gnulib) must build before src, which links against it.
+SUBDIRS = lib src test
 
 EXTRA_DIST = \
+	m4/gnulib-cache.m4 \
 	include \
 	man \
 	README.md \

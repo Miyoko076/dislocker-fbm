@@ -31,6 +31,9 @@ AC_SUBST([DIS_VERSION])
 dis_user_cflags_set=${CFLAGS+yes}
 
 AC_PROG_CC
+
+# gnulib early initialization (must come right after AC_PROG_CC).
+gl_EARLY
 AC_PROG_LN_S
 AM_PROG_AR
 
@@ -221,8 +224,12 @@ case "$DIS_OS" in
 esac
 AC_SUBST([DIS_MANSRC])
 
+# gnulib module initialization (getline, pread, pwrite + dependencies).
+gl_INIT
+
 AC_CONFIG_FILES([
     Makefile
+    lib/Makefile
     src/Makefile
     test/Makefile
     src/dislocker-find.rb
