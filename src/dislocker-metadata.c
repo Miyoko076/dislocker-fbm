@@ -43,9 +43,9 @@
  * On Darwin and FreeBSD, files are opened using 64 bits offsets/variables
  * and O_LARGEFILE isn't defined
  */
-#if defined(__DARWIN) || defined(__FREEBSD)
+#if defined(__DARWIN) || defined(__FREEBSD) || defined(_WIN32)
 #  define O_LARGEFILE 0
-#endif /* __DARWIN || __FREEBSD */
+#endif /* __DARWIN || __FREEBSD || _WIN32 */
 
 
 
