@@ -51,8 +51,12 @@
 #include <locale.h>
 
 #ifndef __DIS_CORE_DUMPS
-#include <sys/time.h>
-#include <sys/resource.h>
+#  ifdef _WIN32
+#    include <windows.h>
+#  else
+#    include <sys/time.h>
+#    include <sys/resource.h>
+#  endif
 #endif
 
 
@@ -79,6 +83,17 @@ dis_context_t dis_new()
 
 #ifndef __DIS_CORE_DUMPS
 	/* As we manage passwords and secrets, do not authorize core dumps */
+#  ifdef _WIN32
+	/*
+	 * SEM_NOGPFAULTERRORBOX disables WER
+	 * (see https://github.com/libuv/libuv/issues/1327); added here for the
+	 * Windows build. Note this is process-global and never restored, so it
+	 * persists for the whole lifetime of an embedding process (e.g. a Python
+	 * interpreter binding libdislocker). Keep that in mind, and clear it
+	 * yourself if you need dumps back.
+	 */
+	SetErrorMode(GetErrorMode() | SEM_NOGPFAULTERRORBOX);
+#  else
 	struct rlimit limit;
 	limit.rlim_cur = 0;
 	limit.rlim_max = 0;
@@ -88,6 +103,7 @@ dis_context_t dis_new()
 		dis_free(dis_ctx);
 		return NULL;
 	}
+#  endif
 #endif
 
 	dis_ctx->fve_fd = -1;
