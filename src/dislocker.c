@@ -51,8 +51,12 @@
 #include <locale.h>
 
 #ifndef __DIS_CORE_DUMPS
-#include <sys/time.h>
-#include <sys/resource.h>
+#  ifdef _WIN32
+#    include <windows.h>
+#  else
+#    include <sys/time.h>
+#    include <sys/resource.h>
+#  endif
 #endif
 
 
@@ -79,6 +83,22 @@ dis_context_t dis_new()
 
 #ifndef __DIS_CORE_DUMPS
 	/* As we manage passwords and secrets, do not authorize core dumps */
+#  ifdef _WIN32
+	/*
+	 * SEM_NOGPFAULTERRORBOX suppresses the crash dialog, the JIT debugger
+	 * launch, and the WER report generation for unhandled exceptions in a
+	 * default environment
+	 * (see https://devblogs.microsoft.com/oldnewthing/20230227-00/?p=107875).
+	 * Note that some registry policies (e.g. LocalDumps) collect dumps on a
+	 * separate path and are not affected by this flag.
+	 * Callers must ensure dis_new() and the crash-prone work run on the
+	 * same thread (true as long as NB_THREAD == 0).
+	 */
+	SetThreadErrorMode(
+		GetThreadErrorMode() | SEM_NOGPFAULTERRORBOX,
+		NULL
+	);
+#  else
 	struct rlimit limit;
 	limit.rlim_cur = 0;
 	limit.rlim_max = 0;
@@ -88,6 +108,7 @@ dis_context_t dis_new()
 		dis_free(dis_ctx);
 		return NULL;
 	}
+#  endif
 #endif
 
 	dis_ctx->fve_fd = -1;
