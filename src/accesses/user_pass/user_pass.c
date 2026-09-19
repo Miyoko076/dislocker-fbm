@@ -250,6 +250,7 @@ static ssize_t my_getpass(char **lineptr, FILE *stream)
 	FILE* saved_out = rl_outstream;
 
 	rl_hook_func_t* saved_startup   = rl_startup_hook;
+	rl_hook_func_t* saved_pre_input = rl_pre_input_hook;
 	rl_voidfunc_t*  saved_redisplay = rl_redisplay_function;
 	const char*     saved_convmeta  = rl_variable_value("convert-meta"); /* "on"/"off" */
 
@@ -258,6 +259,7 @@ static ssize_t my_getpass(char **lineptr, FILE *stream)
 	rl_outstream = stdout;
 
 	rl_startup_hook       = override_keymap_bindings;
+	rl_pre_input_hook     = dis_ctrlc_hook;
 	rl_redisplay_function = dis_null_redisplay;
 
 	/* Prompt was already printed by prompt_up(), so pass an empty prompt. */
@@ -268,6 +270,7 @@ static ssize_t my_getpass(char **lineptr, FILE *stream)
 	rl_outstream = saved_out;
 
 	rl_startup_hook       = saved_startup;
+	rl_pre_input_hook     = saved_pre_input;
 	rl_redisplay_function = saved_redisplay;
 	rl_variable_bind("convert-meta", saved_convmeta);
 

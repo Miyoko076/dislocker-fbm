@@ -64,6 +64,9 @@ int dis_vprintf(DIS_LOGS level, const char* format, va_list ap);
 
 void dis_perror(char* append);
 
+/* rl_pre_input_hook for the readline prompts: Ctrl-C handling (see xstdio.c) */
+int  dis_ctrlc_hook(void);
+
 
 
 

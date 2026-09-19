@@ -608,15 +608,17 @@ int prompt_rp(uint8_t** rp)
 	FILE* saved_in  = rl_instream;
 	FILE* saved_out = rl_outstream;
 
-	rl_getc_func_t* saved_getc    = rl_getc_function;
-	rl_hook_func_t* saved_startup = rl_startup_hook;
+	rl_getc_func_t* saved_getc      = rl_getc_function;
+	rl_hook_func_t* saved_startup   = rl_startup_hook;
+	rl_hook_func_t* saved_pre_input = rl_pre_input_hook;
 
 	/* Read from the terminal, through our key filter and bindings. */
 	rl_instream  = tty;
 	rl_outstream = stdout;
 
-	rl_getc_function = rp_getc;
-	rl_startup_hook  = override_keymap_bindings;
+	rl_getc_function  = rp_getc;
+	rl_startup_hook   = override_keymap_bindings;
+	rl_pre_input_hook = dis_ctrlc_hook;
 
 	/* Re-read terminal capabilities: -u's readline may have left a dumb terminal. */
 	rl_reset_terminal(NULL);
@@ -629,8 +631,9 @@ int prompt_rp(uint8_t** rp)
 	rl_instream  = saved_in;
 	rl_outstream = saved_out;
 
-	rl_getc_function = saved_getc;
-	rl_startup_hook  = saved_startup;
+	rl_getc_function  = saved_getc;
+	rl_startup_hook   = saved_startup;
+	rl_pre_input_hook = saved_pre_input;
 
 	fclose(tty);
 

@@ -23,9 +23,11 @@
 
 #include <string.h>
 #include <time.h>
+#include <signal.h>
 
 #include "dislocker/xstd/xstdio.h"
 #include "dislocker/xstd/xstdlib.h"
+#include <readline/readline.h>   /* after xstdio.h: needs <stdio.h> first */
 
 
 
@@ -35,6 +37,53 @@ static FILE* fds[DIS_LOGS_NB] = {0,};
 
 /* Keep track of the verbosity level */
 static int verbosity = L_QUIET;
+
+
+/* Native Windows (HANDLE_CTRLC_THREAD): SIGINT runs on a console thread while
+ * readline waits for a key, so run readline's Ctrl-C handling there at once. */
+#ifdef HANDLE_CTRLC_THREAD
+typedef void (*sigfn_t)(int);
+
+static sigfn_t rl_sigint;              /* readline's own SIGINT handler */
+
+/* Runs last: readline restores it after its cleanup and raises SIGINT. */
+static void app_sigint(int sig)
+{
+	(void) sig;
+	signal(SIGINT, SIG_IGN);           /* a 2nd Ctrl-C must not kill us mid-exit */
+	exit(130);
+}
+
+static void wake_sigint(int sig)
+{
+	if(rl_sigint)
+		rl_sigint(sig);                /* record it, as readline does */
+	rl_check_signals();                /* ...and handle it now, not at the next key */
+}
+
+static void ctrlc_init(void)
+{
+	signal(SIGINT, app_sigint);        /* becomes readline's "original" handler */
+}
+
+int dis_ctrlc_hook(void)
+{
+	sigfn_t cur = signal(SIGINT, wake_sigint);
+
+	if(cur != wake_sigint && cur != SIG_ERR && cur != SIG_DFL && cur != SIG_IGN)
+		rl_sigint = cur;
+	return 0;
+}
+#else
+static void ctrlc_init(void)
+{
+}
+
+int dis_ctrlc_hook(void)
+{
+	return 0;                          /* readline handles Ctrl-C at once */
+}
+#endif
 
 
 /* Levels transcription into strings */
@@ -57,6 +106,8 @@ static char* msg_tab[DIS_LOGS_NB] = {
 void dis_stdio_init(DIS_LOGS v, const char* file)
 {
 	verbosity = v;
+
+	ctrlc_init();
 
 	FILE* log = NULL;
 	if(file)

@@ -159,8 +159,10 @@ endif()
 # The -u and -p prompts read the password with GNU readline.
 set (LIB ${LIB} readline)
 # -p reads the terminal itself; native Windows has no /dev/tty, so use CONIN$.
+# Ctrl-C arrives there on a console thread; finish the cancel at once (xstdio.c).
 if("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
 	add_definitions (-DREAD_CONIN)
+	add_definitions (-DHANDLE_CTRLC_THREAD)
 endif()
 
 # Places
