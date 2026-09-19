@@ -13,6 +13,7 @@ src/libdislocker.so*
 
 # Configured files
 src/dislocker-find.rb
+man/*/*.1
 
 # Unit test files
 *.gcno

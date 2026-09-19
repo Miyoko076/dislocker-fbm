@@ -27,7 +27,9 @@
 #include "dislocker/accesses/user_pass/user_pass.h"
 #include "dislocker/metadata/vmk.h"
 
+#ifdef __DIS_INTERACTIVE_INPUT
 #include <termios.h>
+#endif
 #include <stdio.h>
 #include <unistd.h>
 
@@ -196,9 +198,12 @@ static ssize_t my_getpass(char **lineptr, FILE *stream)
 
 	/*
 	 * If we're running tests under check, disable echoing off: this doesn't
-	 * work on pipes
+	 * work on pipes.
+	 * The same termios handling is skipped when interactive input is disabled
+	 * at build time (__DIS_INTERACTIVE_INPUT unset): only the getline() read
+	 * below is kept, so pipe/redirection input still works.
 	 */
-#ifndef __CK_DOING_TESTS
+#if !defined(__CK_DOING_TESTS) && defined(__DIS_INTERACTIVE_INPUT)
 	struct termios old, new;
 
 	if(isatty(fileno(stream)))
@@ -212,19 +217,19 @@ static ssize_t my_getpass(char **lineptr, FILE *stream)
 		if(tcsetattr(fileno(stream), TCSAFLUSH, &new) != 0)
 			return -1;
 	}
-#endif /* __CK_DOING_TESTS */
+#endif /* !__CK_DOING_TESTS && __DIS_INTERACTIVE_INPUT */
 
 	/* Read the password. */
 	nread = getline(lineptr, &n, stream);
 
-#ifndef __CK_DOING_TESTS
+#if !defined(__CK_DOING_TESTS) && defined(__DIS_INTERACTIVE_INPUT)
 	if(isatty(fileno(stream)))
 	{
 		/* Restore terminal. */
 		(void) tcsetattr(fileno(stream), TCSAFLUSH, &old);
 	}
 	printf("\n");
-#endif /* __CK_DOING_TESTS */
+#endif /* !__CK_DOING_TESTS && __DIS_INTERACTIVE_INPUT */
 
 	dis_printf(
 		L_DEBUG,

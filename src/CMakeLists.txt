@@ -155,6 +155,18 @@ else()
 	message(WARNING "FUSE support is disabled, Dislocker will be unable to mount BitLocker-encrypted volumes!")
 endif()
 
+# Interactive password input
+# Off unless enabled with -D__DIS_INTERACTIVE_INPUT=ON: the macro stays
+# undefined and the man pages show -p's argument as mandatory.
+option(__DIS_INTERACTIVE_INPUT "Ask for passwords on the terminal when not given" OFF)
+if(__DIS_INTERACTIVE_INPUT)
+	add_definitions(-D__DIS_INTERACTIVE_INPUT)
+	set (DIS_MAN_RP_SYNOPSIS [==[-p[\fIRECOVERY_PASSWORD\fR]]==])
+	message(WARNING "Interactive password input is enabled: building for a Windows target may run into termios.h related problems.")
+else()
+	set (DIS_MAN_RP_SYNOPSIS [==[-p\fIRECOVERY_PASSWORD\fR]==])
+endif()
+
 # Places
 if(NOT DEFINED sharedir)
   set(sharedir ${CMAKE_INSTALL_PREFIX}/share)
@@ -182,6 +194,12 @@ endif()
 
 string (TOLOWER "${CMAKE_SYSTEM_NAME}" SYSNAME)
 set (DIS_MAN ${PROJECT_SOURCE_DIR}/man/${SYSNAME})
+
+file (GLOB DIS_MAN_PAGES RELATIVE ${DIS_MAN} ${DIS_MAN}/*.1.in)
+foreach(DIS_MAN_PAGE ${DIS_MAN_PAGES})
+	string (REGEX REPLACE "\\.1\\.in$" ".1" DIS_MAN_OUT ${DIS_MAN_PAGE})
+	configure_file (${DIS_MAN}/${DIS_MAN_PAGE} ${DIS_MAN}/${DIS_MAN_OUT} @ONLY NEWLINE_STYLE UNIX)
+endforeach()
 
 # RPATH handling
 if(POLICY CMP0042)
