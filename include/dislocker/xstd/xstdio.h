@@ -56,8 +56,6 @@ typedef enum {
  */
 void dis_stdio_init(int verbosity, const char* logfile);
 void dis_stdio_end();
-int  get_input_fd();
-void close_input_fd();
 
 void chomp(char* string);
 

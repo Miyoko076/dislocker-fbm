@@ -27,9 +27,10 @@
 #include "dislocker/accesses/user_pass/user_pass.h"
 #include "dislocker/metadata/vmk.h"
 
-#include <termios.h>
 #include <stdio.h>
 #include <unistd.h>
+
+#include <readline/readline.h>
 
 
 /**
@@ -178,6 +179,36 @@ int get_vmk_from_user_pass2(dis_metadata_t dis_meta,
 }
 
 
+/* Redisplay hook that draws nothing: the password stays hidden but editable. */
+static void dis_null_redisplay(void)
+{
+	/* intentionally empty */
+}
+
+
+/* Startup hook (after inputrc, before the first key), so it wins over inputrc. */
+static int override_keymap_bindings(void)
+{
+	Keymap km = rl_get_keymap();
+
+	/* No completion: M-?/M-= would list files on screen, M-* insert them. */
+	rl_unbind_function_in_map(rl_complete,             km);
+	rl_unbind_function_in_map(rl_possible_completions, km);
+	rl_unbind_function_in_map(rl_insert_completions,   km);
+	rl_unbind_function_in_map(rl_menu_complete,        km);
+	rl_unbind_function_in_map(rl_old_menu_complete,    km);
+
+	/* TAB -> literal tab (after the unbind, which leaves it a dead key). */
+	rl_bind_key('\t', rl_insert);
+
+	/* Bytes >= 0x80 (e.g. UTF-8 Hangul) are input, not Meta keys: in the C
+	 * locale convert-meta would run them as ESC-prefixed commands. */
+	rl_variable_bind("convert-meta", "off");
+
+	return 0;
+}
+
+
 /**
  * Get the user's pass without displaying it.
  *
@@ -191,49 +222,72 @@ static ssize_t my_getpass(char **lineptr, FILE *stream)
 	if(!lineptr || !stream)
 		return -1;
 
-	size_t n = 0;
-	ssize_t nread;
-
-	/*
-	 * If we're running tests under check, disable echoing off: this doesn't
-	 * work on pipes
-	 */
-#ifndef __CK_DOING_TESTS
-	struct termios old, new;
-
-	if(isatty(fileno(stream)))
+	/* Not a tty (pipe, file): plain getline(), as in the original. */
+	if(!isatty(fileno(stream)))
 	{
-		/* Turn echoing off and fail if we can't. */
-		if(tcgetattr(fileno(stream), &old) != 0)
-			return -1;
+		size_t n = 0;
 
-		new = old;
-		new.c_lflag &= (tcflag_t)~ECHO;
-		if(tcsetattr(fileno(stream), TCSAFLUSH, &new) != 0)
-			return -1;
-	}
+		/* Read the password. */
+		ssize_t nread = getline(lineptr, &n, stream);
+
+		/* Like the original: a newline after getline(), even for non-tty input. */
+#ifndef __CK_DOING_TESTS
+		printf("\n");
 #endif /* __CK_DOING_TESTS */
 
-	/* Read the password. */
-	nread = getline(lineptr, &n, stream);
+		dis_printf(
+			L_DEBUG,
+			"New memory allocation at %p (%#" F_SIZE_T " byte allocated)\n",
+			(void*) *lineptr,
+			n
+		);
 
-#ifndef __CK_DOING_TESTS
-	if(isatty(fileno(stream)))
-	{
-		/* Restore terminal. */
-		(void) tcsetattr(fileno(stream), TCSAFLUSH, &old);
+		return nread;
 	}
-	printf("\n");
-#endif /* __CK_DOING_TESTS */
+
+	/* Save the readline globals we override. */
+	FILE* saved_in  = rl_instream;
+	FILE* saved_out = rl_outstream;
+
+	rl_hook_func_t* saved_startup   = rl_startup_hook;
+	rl_voidfunc_t*  saved_redisplay = rl_redisplay_function;
+	const char*     saved_convmeta  = rl_variable_value("convert-meta"); /* "on"/"off" */
+
+	/* Read from stream with completion off and nothing echoed. */
+	rl_instream  = stream;
+	rl_outstream = stdout;
+
+	rl_startup_hook       = override_keymap_bindings;
+	rl_redisplay_function = dis_null_redisplay;
+
+	/* Prompt was already printed by prompt_up(), so pass an empty prompt. */
+	char* line = readline("");
+
+	/* Restore the readline globals. */
+	rl_instream  = saved_in;
+	rl_outstream = saved_out;
+
+	rl_startup_hook       = saved_startup;
+	rl_redisplay_function = saved_redisplay;
+	rl_variable_bind("convert-meta", saved_convmeta);
+
+	/* Nothing was echoed, so emit the newline ourselves. */
+	putchar('\n');
+
+	if(!line)
+		return -1; /* EOF (e.g. Ctrl-D) */
 
 	dis_printf(
 		L_DEBUG,
 		"New memory allocation at %p (%#" F_SIZE_T " byte allocated)\n",
-		(void*) *lineptr,
-		n
+		(void*) line,
+		strlen(line) + 1
 	);
 
-	return nread;
+	*lineptr = line; /* readline() returns a malloc()ed, NUL-terminated string */
+
+	/* +1 for the newline readline() strips, so an empty password still succeeds. */
+	return (ssize_t)(strlen(line) + 1);
 }
 
 

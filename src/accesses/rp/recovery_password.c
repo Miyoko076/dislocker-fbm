@@ -23,10 +23,12 @@
 
 
 #include <errno.h>
+#include <stdio.h>
+
+#include <readline/readline.h>
 
 #include "dislocker/accesses/rp/recovery_password.h"
 #include "dislocker/metadata/vmk.h"
-#include "dislocker/xstd/xsys_select.h"
 
 
 
@@ -35,6 +37,24 @@
 #define NB_DIGIT_BLOC 6
 
 #define INTERMEDIATE_KEY_LENGTH 32
+
+/* Length of one block plus its trailing '-' separator. */
+#define RP_BLOCK_STRIDE (NB_DIGIT_BLOC + 1)
+
+/* Length of a complete password string: 8 blocks of 6 digits + 7 separators. */
+#define RP_FULL_LEN (NB_RP_BLOCS * NB_DIGIT_BLOC + (NB_RP_BLOCS - 1))
+
+/* Terminal for the -p prompt; native Windows has no /dev/tty (READ_CONIN). */
+#ifdef READ_CONIN
+#  define RP_TTY_IN  "CONIN$"
+#else
+#  define RP_TTY_IN  "/dev/tty"
+#endif
+
+/* The real password, from rp_digit's 8th block until prompt_rp copies it. */
+static char rp_captured[RP_FULL_LEN + 1];
+
+static void rp_build_mask(char* out);
 
 
 /**
@@ -402,6 +422,164 @@ int intermediate_key(const uint8_t *recovery_password,
 } // End intermediate_key
 
 
+/* rl_getc_function: pass digits, backspace and DEL (Delete key -> DEL) only;
+ * swallow every other byte and escape sequence. */
+static int rp_getc(FILE* stream)
+{
+	int c = rl_getc(stream);
+	for(;;)
+	{
+		if(c < 0) return c;
+		if((c >= '0' && c <= '9') || c == '\b' || c == 0x7f) return c;
+		if(c != 0x1b) { c = rl_getc(stream); continue; }
+
+		/* ESC sequence */
+		c = rl_getc(stream);
+		if(c == '[')                  /* CSI */
+		{
+			int nparam = 0, first = 0, inter = 0;
+			while((c = rl_getc(stream)) >= 0x20 && c <= 0x3f)
+			{
+				if(c <= 0x2f) inter = 1;
+				else if(inter) break;
+				else if(nparam++ == 0) first = c;
+			}
+			if(c == '~' && !inter && nparam == 1 && first == '3')
+				return 0x7f;
+			if(c >= 0x40 && c <= 0x7e) c = rl_getc(stream);
+		}
+		else if(c == 'O')             /* SS3 */
+		{
+			while((c = rl_getc(stream)) >= 0x30 && c <= 0x3f) ;
+			if(c == 0x1b) continue;
+			if(c >= 0 && c < 0x80) c = rl_getc(stream);
+		}
+	}
+}
+
+
+/* Digit key: append it; on each full block, check it and add '-', finish after
+ * the 8th block, or drop the block if it is invalid. */
+static int rp_digit(int count, int key)
+{
+	(void) count;
+
+	/* Append exactly one digit. Append-only model => rl_point stays at rl_end. */
+	char s[2];
+	s[0] = (char) key;
+	s[1] = '\0';
+	rl_insert_text(s);
+
+	/* A block completes at length 6, 13, 20, ... */
+	if((rl_end % RP_BLOCK_STRIDE) != NB_DIGIT_BLOC)
+		return 0;
+
+	int block_nb = rl_end / RP_BLOCK_STRIDE + 1;   /* 1 .. NB_RP_BLOCS */
+
+	/* Copy out the six digits that just completed. */
+	uint8_t blk[NB_DIGIT_BLOC + 1];
+	memcpy(blk, rl_line_buffer + (rl_end - NB_DIGIT_BLOC), NB_DIGIT_BLOC);
+	blk[NB_DIGIT_BLOC] = '\0';
+
+	if(valid_block(blk, block_nb, NULL))
+	{
+		if(block_nb >= NB_RP_BLOCS)
+		{
+			/* All blocks valid: keep the password, let readline redraw the line
+			 * as a mask (it handles wrapped lines; a plain '\r' would not). */
+			char masked[RP_FULL_LEN + 1];
+			memcpy(rp_captured, rl_line_buffer, (size_t) RP_FULL_LEN + 1);
+			rp_build_mask(masked);
+			rl_replace_line(masked, 1);   /* 1: also drop the undo list */
+			rl_point = rl_end;
+			rl_redisplay();
+			rl_done = 1;
+		}
+		else
+		{
+			rl_insert_text("-");
+		}
+	}
+	else
+	{
+		/* Show the 6th digit before rejecting the block, as the original did. */
+		rl_redisplay();
+
+		/* Drop the block (rl_delete_text() does not move rl_point). */
+		rl_delete_text(rl_end - NB_DIGIT_BLOC, rl_end);
+		rl_point = rl_end;
+
+		rl_ding();
+		rl_crlf();
+		fflush(rl_outstream);          /* rl_crlf()'s newline first: stdout may be buffered */
+		fputs("Invalid block.\n", stderr);   /* like the original: on stderr */
+		rl_on_new_line();
+		rl_forced_update_display();
+	}
+
+	return 0;
+}
+
+
+/* Backspace/DEL: delete the last digit; a trailing '-' goes with the digit before it. */
+static int rp_backspace(int count, int key)
+{
+	(void) count;
+	(void) key;
+
+	if(rl_end <= 0)
+		return 0;
+
+	if(rl_line_buffer[rl_end - 1] == '-')
+	{
+		int from = rl_end - 2;
+		if(from < 0)
+			from = 0;
+		rl_delete_text(from, rl_end);
+	}
+	else
+	{
+		rl_delete_text(rl_end - 1, rl_end);
+	}
+
+	rl_point = rl_end;   /* rl_delete_text() does not move point */
+	return 0;
+}
+
+
+/* Startup hook (after inputrc, before the first key), so it wins over inputrc. */
+static int override_keymap_bindings(void)
+{
+	Keymap km = rl_get_keymap();
+	int d;
+
+	/* Every byte rp_getc() lets through must be bound here, so no default or
+	 * inputrc binding can run. Widening rp_getc() means binding the new key. */
+	for(d = '0'; d <= '9'; d++)
+		rl_bind_key_in_map(d, rp_digit, km);
+
+	rl_bind_key_in_map('\b', rp_backspace, km);   /* ^H                      */
+	rl_bind_key_in_map(0x7f, rp_backspace, km);   /* DEL (and the Delete key) */
+
+	return 0;
+}
+
+
+/* Build the masked "XXXXXX-XXXXXX-...-XXXXXX" string into out (>= RP_FULL_LEN+1). */
+static void rp_build_mask(char* out)
+{
+	int i, pos = 0;
+	for(i = 0; i < NB_RP_BLOCS; i++)
+	{
+		if(i)
+			out[pos++] = '-';
+		memset(out + pos, 'X', NB_DIGIT_BLOC);
+		pos += NB_DIGIT_BLOC;
+	}
+	out[pos] = '\0';
+}
+
+
 /**
  * Prompt for the recovery password to be entered
  *
@@ -414,166 +592,83 @@ int prompt_rp(uint8_t** rp)
 	if(!rp)
 		return FALSE;
 
+	*rp = NULL;
 
-	int in       = get_input_fd();
+	const char* prompt = "Enter the recovery password: ";
 
-	char* prompt = "\rEnter the recovery password: ";
-
-	int idx      = 0;
-	uint8_t c    = 0;
-	int block_nb = 1;
-	uint8_t digits[NB_DIGIT_BLOC + 1] = {0,};
-
-	uint8_t* blah = NULL;
-
-	fd_set rfds;
-	int    nfds = in + 1;
-
-	if(in < 0)
+	/* The terminal, never stdin; none (cron, daemon) -> fail, as in the original. */
+	FILE* tty = fopen(RP_TTY_IN, "r");
+	if(!tty)
 	{
-		fprintf(stderr, "Cannot open tty.\n");
+		fprintf(stderr, "Cannot open tty or conin.\n");
 		return FALSE;
 	}
 
-	if(FD_SETSIZE < 0)
+	/* Save the readline globals we override. */
+	FILE* saved_in  = rl_instream;
+	FILE* saved_out = rl_outstream;
+
+	rl_getc_func_t* saved_getc    = rl_getc_function;
+	rl_hook_func_t* saved_startup = rl_startup_hook;
+
+	/* Read from the terminal, through our key filter and bindings. */
+	rl_instream  = tty;
+	rl_outstream = stdout;
+
+	rl_getc_function = rp_getc;
+	rl_startup_hook  = override_keymap_bindings;
+
+	/* Re-read terminal capabilities: -u's readline may have left a dumb terminal. */
+	rl_reset_terminal(NULL);
+
+	memset(rp_captured, 0, sizeof(rp_captured));   /* no stale plaintext */
+
+	char* line = readline(prompt);
+
+	/* Restore the readline globals, then close the terminal. */
+	rl_instream  = saved_in;
+	rl_outstream = saved_out;
+
+	rl_getc_function = saved_getc;
+	rl_startup_hook  = saved_startup;
+
+	fclose(tty);
+
+	if(!line)
 	{
-		fprintf(stderr, "Cannot add fd in the set.\n");
+		/* EOF / aborted before a full password was entered. */
+		putchar('\n');
 		return FALSE;
 	}
 
-	if((unsigned) in >= (unsigned) FD_SETSIZE)
+	/* 'line' holds only the mask; the password is in rp_captured. */
+	free(line);
+
+	/* Only the 8th valid block ends readline() with a line; check anyway. */
+	if(strlen(rp_captured) != (size_t) RP_FULL_LEN)
 	{
-		fprintf(stderr,
-		        "Terminal file descriptor (%u) is equal to or larger than "
-		        "FD_SETSIZE (%u).\n", (unsigned) in, (unsigned) FD_SETSIZE);
-		close_input_fd();
+		memset(rp_captured, 0, sizeof(rp_captured));
+		dis_printf(L_ERROR, "Unexpected recovery password length, aborting\n");
 		return FALSE;
 	}
 
-
-	/* 8 = 7 hyphens separating the blocks + 1 '\0' at the end of the string */
-	*rp = malloc(NB_RP_BLOCS * NB_DIGIT_BLOC + 8);
-	memset(*rp, 0, NB_RP_BLOCS * NB_DIGIT_BLOC + 8);
-
-	blah = *rp;
-
-	printf("%s", prompt);
+	/* The masked line may have wrapped; move past it before our confirmation. */
+	putchar('\n');
+	printf("Valid password format, continuing.\n");
 	fflush(NULL);
 
-	FD_ZERO(&rfds);
-	/** @see xstd/xsys_select.h for an explanation of this macro */
-	DIS_FD_SET(in, &rfds);
-
-	while(1)
+	uint8_t* out = malloc((size_t) RP_FULL_LEN + 1);
+	if(!out)
 	{
-		/* Wait for inputs */
-		int selret = select(nfds+1, &rfds, NULL, NULL, NULL);
-
-		/* Look for errors */
-		if(selret == -1)
-		{
-			fprintf(stderr, "Error %d in select: %s\n", errno, strerror(errno));
-			break;
-		}
-
-
-		if(read(in, &c, 1) <= 0)
-		{
-			fprintf(
-				stderr,
-				"Something is available for reading but unable to "
-				"read (%d): %s\n",
-				errno,
-				strerror(errno)
-			);
-			break;
-		}
-
-		/* If this is an hyphen, just ignore it */
-		if(c == '-')
-			continue;
-
-		/* Place the character at the right place or erase the last character */
-		if(idx <= NB_DIGIT_BLOC)
-		{
-			/* If backspace was hit */
-			if(c == '\b' || c == '\x7f')
-			{
-				idx--;
-
-				if(idx < 0 && block_nb > 1)
-				{
-					blah -= (NB_DIGIT_BLOC + 1);
-					snprintf((char*)digits, NB_DIGIT_BLOC, "%s", blah);
-					*blah = '\0';
-					idx   =  NB_DIGIT_BLOC - 1;
-					block_nb--;
-				}
-
-				if(idx < 0)
-					idx = 0;
-
-				/* Yeah, I agree, this is kinda dirty */
-				digits[idx] = ' ';
-				printf("%s%s%s", prompt, *rp, digits);
-
-				digits[idx] = '\0';
-				idx--;
-			}
-			else if(c >= '0' && c <= '9')
-				digits[idx] = (uint8_t)c;
-			else
-				continue;
-		}
-
-		printf("%s%s%s", prompt, *rp, digits);
-		fflush(NULL);
-		idx++;
-
-		/* Now if we're at the end of a block, (in)validate it */
-		if(idx >= NB_DIGIT_BLOC)
-		{
-			if(valid_block(digits, block_nb, NULL))
-			{
-				snprintf((char*)blah, NB_DIGIT_BLOC+1, "%s", digits);
-				blah += NB_DIGIT_BLOC;
-
-				if(block_nb >= NB_RP_BLOCS)
-				{
-					/* Hide the recovery password for sneaky eyes */
-					printf(
-						"%1$s%2$s-%2$s-%2$s-%2$s-%2$s-%2$s-%2$s-%2$s\n",
-						prompt,
-						"XXXXXX"
-					);
-					printf("Valid password format, continuing.\n");
-					close_input_fd();
-					return TRUE;
-				}
-				else
-				{
-					putchar('-');
-					*blah = '-';
-					blah++;
-				}
-
-				block_nb++;
-			}
-			else
-			{
-				fprintf(stderr, "\nInvalid block.\n");
-				printf("%s%s", prompt, *rp);
-			}
-
-			fflush(NULL);
-
-			idx = 0;
-			memset(digits, 0, NB_DIGIT_BLOC);
-		}
+		memset(rp_captured, 0, sizeof(rp_captured));
+		dis_printf(L_ERROR, "Cannot allocate memory for recovery password, abort.\n");
+		return FALSE;
 	}
+	memcpy(out, rp_captured, (size_t) RP_FULL_LEN + 1);
+	memset(rp_captured, 0, sizeof(rp_captured));   /* wipe the static plaintext */
 
-	close_input_fd();
-	return FALSE;
+	*rp = out;   /* malloc()ed "DDDDDD-...-DDDDDD" */
+	return TRUE;
 }
 
 

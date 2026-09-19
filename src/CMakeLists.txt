@@ -155,6 +155,14 @@ else()
 	message(WARNING "FUSE support is disabled, Dislocker will be unable to mount BitLocker-encrypted volumes!")
 endif()
 
+# Readline
+# The -u and -p prompts read the password with GNU readline.
+set (LIB ${LIB} readline)
+# -p reads the terminal itself; native Windows has no /dev/tty, so use CONIN$.
+if("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
+	add_definitions (-DREAD_CONIN)
+endif()
+
 # Places
 if(NOT DEFINED sharedir)
   set(sharedir ${CMAKE_INSTALL_PREFIX}/share)

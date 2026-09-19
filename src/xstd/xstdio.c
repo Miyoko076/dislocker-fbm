@@ -21,14 +21,6 @@
  * USA.
  */
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-
-#include <termios.h>
-#include <unistd.h>
-
-
 #include <string.h>
 #include <time.h>
 
@@ -53,11 +45,6 @@ static char* msg_tab[DIS_LOGS_NB] = {
 	"INFO",
 	"DEBUG"
 };
-
-
-/** Saving STDIN parameters before unbufferisation */
-static struct termios ti_save;
-static int            tty_fd = -1;
 
 
 
@@ -117,51 +104,10 @@ void dis_stdio_init(DIS_LOGS v, const char* file)
 
 
 /**
- * Create and return an unbuffered stdin
- *
- * @return The file descriptor of the unbuffered input tty
- */
-int get_input_fd()
-{
-	if(tty_fd > -1)
-		return tty_fd;
-
-	struct termios ti;
-
-	if ((tty_fd = open("/dev/tty", O_RDONLY | O_NONBLOCK)) < 0)
-		return -1;
-
-	tcgetattr(tty_fd, &ti);
-	ti_save = ti;
-	ti.c_lflag    &= (typeof(tcflag_t)) ~(ICANON | ECHO);
-	ti.c_cc[VMIN]  = 1;
-	ti.c_cc[VTIME] = 0;
-	tcsetattr(tty_fd, TCSANOW, &ti);
-
-	return tty_fd;
-}
-
-
-/**
- * Close the unbuffered stdin if opened
- */
-void close_input_fd()
-{
-	if(tty_fd > -1)
-	{
-		tcsetattr(tty_fd, TCSANOW, &ti_save);
-		close(tty_fd);
-	}
-}
-
-
-/**
  * Endify in/outputs
  */
 void dis_stdio_end()
 {
-	close_input_fd();
-
 	if(verbosity > L_QUIET)
 		fclose(fds[L_CRITICAL]);
 }
