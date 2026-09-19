@@ -25,7 +25,9 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
+#ifdef __DIS_INTERACTIVE_INPUT
 #include <termios.h>
+#endif
 #include <unistd.h>
 
 
@@ -55,9 +57,11 @@ static char* msg_tab[DIS_LOGS_NB] = {
 };
 
 
+#ifdef __DIS_INTERACTIVE_INPUT
 /** Saving STDIN parameters before unbufferisation */
 static struct termios ti_save;
 static int            tty_fd = -1;
+#endif
 
 
 
@@ -123,6 +127,7 @@ void dis_stdio_init(DIS_LOGS v, const char* file)
  */
 int get_input_fd()
 {
+#ifdef __DIS_INTERACTIVE_INPUT
 	if(tty_fd > -1)
 		return tty_fd;
 
@@ -139,6 +144,9 @@ int get_input_fd()
 	tcsetattr(tty_fd, TCSANOW, &ti);
 
 	return tty_fd;
+#else
+	return -1;
+#endif
 }
 
 
@@ -147,11 +155,13 @@ int get_input_fd()
  */
 void close_input_fd()
 {
+#ifdef __DIS_INTERACTIVE_INPUT
 	if(tty_fd > -1)
 	{
 		tcsetattr(tty_fd, TCSANOW, &ti_save);
 		close(tty_fd);
 	}
+#endif
 }
 
 

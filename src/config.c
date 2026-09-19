@@ -24,6 +24,11 @@
 
 #include <string.h>
 #include <getopt.h>
+#ifndef __DIS_INTERACTIVE_INPUT
+#include <unistd.h> /* isatty, fileno */
+#include <stdlib.h> /* getenv */
+#include <stdio.h>  /* stdin */
+#endif /* __DIS_INTERACTIVE_INPUT */
 
 #include "dislocker/common.h"
 #include "dislocker/config.priv.h"
@@ -397,6 +402,44 @@ int dis_getopts(dis_context_t dis_ctx, int argc, char** argv)
 		cfg->verbosity = L_DEBUG;
 	if(cfg->verbosity < L_CRITICAL)
 		cfg->verbosity = L_CRITICAL;
+
+#ifndef __DIS_INTERACTIVE_INPUT
+	/*
+	 * This build has interactive (tty) password input compiled out. Reject
+	 * the option combinations that would need it, so we fail during option
+	 * parsing instead of later when the prompt would have run.
+	 *
+	 * The user password can still come from -u<PASSWORD>, the
+	 * DISLOCKER_PASSWORD environment variable, or stdin (pipe/redirect); it
+	 * is only unavailable when none of those is present and stdin is a tty.
+	 * The recovery password has no such fallback, so it must be given inline.
+	 */
+	if((cfg->decryption_mean & DIS_USE_USER_PASSWORD)
+	   && !cfg->user_password
+	   && getenv("DISLOCKER_PASSWORD") == NULL
+	   && isatty(fileno(stdin)))
+	{
+		dis_printf(L_CRITICAL,
+			"Interactive password input is not supported in this build. "
+			"Provide the user password as -u<PASSWORD>, via the "
+			"DISLOCKER_PASSWORD environment variable, or on stdin "
+			"(pipe or redirect).\n");
+		free(long_opts);
+		dis_free_args(dis_ctx);
+		return -1;
+	}
+
+	if((cfg->decryption_mean & DIS_USE_RECOVERY_PASSWORD)
+	   && !cfg->recovery_password)
+	{
+		dis_printf(L_CRITICAL,
+			"Interactive recovery password input is not supported in this "
+			"build. Provide it as -p<RECOVERY_PASSWORD>.\n");
+		free(long_opts);
+		dis_free_args(dis_ctx);
+		return -1;
+	}
+#endif /* __DIS_INTERACTIVE_INPUT */
 
 	/* Check decryption method */
 	if(!cfg->decryption_mean)

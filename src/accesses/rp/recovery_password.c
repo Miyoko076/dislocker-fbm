@@ -26,7 +26,9 @@
 
 #include "dislocker/accesses/rp/recovery_password.h"
 #include "dislocker/metadata/vmk.h"
+#ifdef __DIS_INTERACTIVE_INPUT
 #include "dislocker/xstd/xsys_select.h"
+#endif
 
 
 
@@ -414,6 +416,7 @@ int prompt_rp(uint8_t** rp)
 	if(!rp)
 		return FALSE;
 
+#ifdef __DIS_INTERACTIVE_INPUT
 
 	int in       = get_input_fd();
 
@@ -574,6 +577,12 @@ int prompt_rp(uint8_t** rp)
 
 	close_input_fd();
 	return FALSE;
+#else
+	(void) rp;
+	fprintf(stderr,
+		"Interactive recovery password input is disabled in this build.\n");
+	return FALSE;
+#endif
 }
 
 
