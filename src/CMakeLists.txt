@@ -200,6 +200,22 @@ add_library (${PROJECT_NAME} SHARED ${SOURCES})
 target_include_directories (${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include)
 target_link_libraries (${PROJECT_NAME} PRIVATE ${LIB})
 set_target_properties (${PROJECT_NAME} PROPERTIES VERSION "${VERSION}" SOVERSION "${VERSION_MAJOR}.${VERSION_MINOR}")
+
+# gnulib replacements for MinGW, from the snapshot in third_party/gnulib.
+# gnulib-snapshot.cmake must set GNULIB_SNAPSHOT_SOURCES (the .c files to
+# compile, in archive order); config.h and the generated headers sit next to
+# it. Without that file the build is unchanged.
+set (GNULIB_DIR ${PROJECT_SOURCE_DIR}/third_party/gnulib)
+if(MINGW AND EXISTS ${GNULIB_DIR}/gnulib-snapshot.cmake)
+	include (${GNULIB_DIR}/gnulib-snapshot.cmake)
+	list (TRANSFORM GNULIB_SNAPSHOT_SOURCES PREPEND ${GNULIB_DIR}/ OUTPUT_VARIABLE GNULIB_SOURCES)
+	add_library (gnulib STATIC ${GNULIB_SOURCES})
+	target_include_directories (gnulib BEFORE PUBLIC ${GNULIB_DIR})
+	target_compile_options (gnulib PUBLIC "SHELL:-include ${GNULIB_DIR}/config.h")
+	target_link_libraries (${PROJECT_NAME} PUBLIC gnulib)
+elseif(MINGW)
+	message (WARNING "gnulib not found in ${GNULIB_DIR}, skipping")
+endif()
 install (TARGETS ${PROJECT_NAME} LIBRARY DESTINATION "${libdir}")
 
 if (${APPLE})
