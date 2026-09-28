@@ -588,13 +588,13 @@ typedef int _verify_intmax_size[sizeof (intmax_t) == sizeof (uintmax_t)
 # undef WCHAR_MAX
 # if 
 #  define WCHAR_MIN  \
-    _STDINT_SIGNED_MIN (, 0)
+    _STDINT_SIGNED_MIN (16, 0)
 # else
 #  define WCHAR_MIN  \
-    _STDINT_UNSIGNED_MIN (, 0)
+    _STDINT_UNSIGNED_MIN (16, 0)
 # endif
 # define WCHAR_MAX  \
-   _STDINT_MAX (, , 0)
+   _STDINT_MAX (, 16, 0)
 
 /* wint_t limits */
 /* If gnulib's <wchar.h> or <wctype.h> overrides wint_t,  is not

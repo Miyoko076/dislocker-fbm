@@ -4,15 +4,15 @@
 # The other variables record how the snapshot was made.
 
 # gllib/Makefile: am_libgnu_la_OBJECTS then libgnu_la_LIBADD (libtool archive order)
-set (GNULIB_SNAPSHOT_SOURCES fseterr.c fstat.c getdelim.c getline.c lseek.c malloca.c msvc-inval.c msvc-nothrow.c pread.c pwrite.c raise.c read.c stat.c stat-time.c stdio-consolesafe.c stdlib.c streq.c unistd.c write.c stat-w32.c)
+set (GNULIB_SNAPSHOT_SOURCES c32isalnum.c c32isalpha.c c32isblank.c c32iscntrl.c c32isdigit.c c32isgraph.c c32islower.c c32isprint.c c32ispunct.c c32isspace.c c32isupper.c c32isxdigit.c c32tolower.c c32width.c free.c fseterr.c fstat.c getdelim.c getline.c hard-locale.c localcharset.c localeconv.c lseek.c malloca.c math.c mbchar.c mbiter-aux.c mbiterf.c mbrtoc32.c mbrtowc.c mbsinit.c mbsnlen.c mbszero.c memeq.c msvc-inval.c msvc-nothrow.c pread.c printf-frexp.c printf-frexpl.c pwrite.c raise.c read.c setlocale_null.c setlocale_null-unlocked.c stat.c stat-time.c stdio-consolesafe.c stdlib.c streq.c unicase/tolower.c unictype/ctype_alnum.c unictype/ctype_alpha.c unictype/ctype_blank.c unictype/ctype_cntrl.c unictype/ctype_digit.c unictype/ctype_graph.c unictype/ctype_lower.c unictype/ctype_print.c unictype/ctype_punct.c unictype/ctype_space.c unictype/ctype_upper.c unictype/ctype_xdigit.c unistd.c uniwidth/width.c vfzprintf.c wctype-h.c wcwidth.c write.c xsize.c asnprintf.c fprintf.c printf-args.c printf-parse.c stat-w32.c vasnprintf.c vfprintf.c)
 
 # gllib/Makefile: BUILT_SOURCES, plus config.h from configure (package identity removed)
-set (GNULIB_SNAPSHOT_GENERATED config.h alloca.h errno.h fcntl.h limits.h signal.h stddef.h stdint.h stdio.h stdlib.h string.h sys/stat.h sys/types.h time.h unistd.h)
+set (GNULIB_SNAPSHOT_GENERATED config.h alloca.h errno.h fcntl.h inttypes.h limits.h locale.h math.h signal.h stddef.h stdint.h stdio.h stdlib.h string.h sys/stat.h sys/types.h time.h uchar.h unicase.h unictype.h uninorm.h unistd.h unitypes.h uniwidth.h wchar.h wctype.h)
 
 # Other files the compiler read through #include (dependency output): helper headers
-set (GNULIB_SNAPSHOT_HEADERS filename.h fseterr.h idx.h malloca.h msvc-inval.h msvc-nothrow.h pathmax.h stat-time.h stat-w32.h stdio-impl.h xalloc-oversized.h)
+set (GNULIB_SNAPSHOT_HEADERS arg-nonnull.h attribute.h c32is-impl.h c32to-impl.h filename.h float+.h fpucw.h fseterr.h hard-locale.h idx.h intprops-internal.h intprops.h isnand-nolibm.h isnanl-nolibm.h localcharset.h malloca.h mbchar.h mbiter-aux.h mbiterf.h mbrtowc-impl-utf8.h minmax.h msvc-inval.h msvc-nothrow.h pathmax.h printf-args.h printf-frexp.h printf-frexpl.h printf-parse.h setlocale_null.h stat-time.h stat-w32.h stdio-impl.h streq-opt.h unicase/simple-mapping.h unicase/tolower.h unictype/bitmap.h unictype/ctype_alnum.h unictype/ctype_alpha.h unictype/ctype_blank.h unictype/ctype_cntrl.h unictype/ctype_digit.h unictype/ctype_graph.h unictype/ctype_lower.h unictype/ctype_print.h unictype/ctype_punct.h unictype/ctype_space.h unictype/ctype_upper.h unictype/ctype_xdigit.h uniwidth/cjk.h uniwidth/width0.h uniwidth/width2.h vasnprintf.h xalloc-oversized.h xsize.h)
 
-set (GNULIB_SNAPSHOT_MODULES getline pread pwrite)
+set (GNULIB_SNAPSHOT_MODULES fprintf-posix getline pread pwrite vfprintf-posix)
 set (GNULIB_SNAPSHOT_LANGUAGES "C")   # configured with CXX=no: regenerate if C++ code includes these headers
 set (GNULIB_SNAPSHOT_GNULIB "a61568922e80a0cc1fd01ee43420a7765377cdad")
 set (GNULIB_SNAPSHOT_HOST "x86_64-w64-mingw32")
