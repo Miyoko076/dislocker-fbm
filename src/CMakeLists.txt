@@ -91,6 +91,12 @@ if("${CMAKE_SYSTEM_NAME}" STREQUAL "Darwin")
 	set (CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,-bind_at_load")
 	# Library for libiconv
 	set (LIB ${LIB} iconv)
+elseif("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
+	if(MINGW)
+		set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wconversion")
+		# Library for libiconv (not in the MinGW C runtime)
+		set (LIB ${LIB} iconv)
+	endif()
 else()
 	# Useless warnings when used within Darwin
 	set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wconversion")
