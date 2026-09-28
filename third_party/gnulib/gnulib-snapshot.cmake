@@ -4,15 +4,15 @@
 # The other variables record how the snapshot was made.
 
 # gllib/Makefile: am_libgnu_la_OBJECTS then libgnu_la_LIBADD (libtool archive order)
-set (GNULIB_SNAPSHOT_SOURCES fseterr.c getdelim.c getline.c stdio-consolesafe.c stdlib.c unistd.c)
+set (GNULIB_SNAPSHOT_SOURCES fseterr.c fstat.c getdelim.c getline.c lseek.c malloca.c msvc-inval.c msvc-nothrow.c pread.c pwrite.c raise.c read.c stat.c stat-time.c stdio-consolesafe.c stdlib.c streq.c unistd.c write.c stat-w32.c)
 
 # gllib/Makefile: BUILT_SOURCES, plus config.h from configure (package identity removed)
-set (GNULIB_SNAPSHOT_GENERATED config.h errno.h fcntl.h limits.h stddef.h stdint.h stdio.h stdlib.h sys/types.h unistd.h)
+set (GNULIB_SNAPSHOT_GENERATED config.h alloca.h errno.h fcntl.h limits.h signal.h stddef.h stdint.h stdio.h stdlib.h string.h sys/stat.h sys/types.h time.h unistd.h)
 
 # Other files the compiler read through #include (dependency output): helper headers
-set (GNULIB_SNAPSHOT_HEADERS fseterr.h stdio-impl.h)
+set (GNULIB_SNAPSHOT_HEADERS filename.h fseterr.h idx.h malloca.h msvc-inval.h msvc-nothrow.h pathmax.h stat-time.h stat-w32.h stdio-impl.h xalloc-oversized.h)
 
-set (GNULIB_SNAPSHOT_MODULES getline)
+set (GNULIB_SNAPSHOT_MODULES getline pread pwrite)
 set (GNULIB_SNAPSHOT_LANGUAGES "C")   # configured with CXX=no: regenerate if C++ code includes these headers
 set (GNULIB_SNAPSHOT_GNULIB "a61568922e80a0cc1fd01ee43420a7765377cdad")
 set (GNULIB_SNAPSHOT_HOST "x86_64-w64-mingw32")

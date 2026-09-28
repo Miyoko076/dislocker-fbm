@@ -2302,12 +2302,12 @@ _GL_WARN_ON_USE (linkat, "linkat is unportable - "
 #endif
 
 
-#if 0
+#if 1
 /* Set the offset of FD relative to SEEK_SET, SEEK_CUR, or SEEK_END.
    Return the new offset if successful, otherwise -1 and errno set.
    See the POSIX:2008 specification
    <https://pubs.opengroup.org/onlinepubs/9699919799/functions/lseek.html>.  */
-# if 0
+# if 1
 #  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
 #   define lseek rpl_lseek
 #  endif
@@ -2396,7 +2396,7 @@ _GL_WARN_ON_USE (pipe2, "pipe2 is unportable - "
 #endif
 
 
-#if 0
+#if 1
 /* Read at most BUFSIZE bytes from FD into BUF, starting at OFFSET.
    Return the number of bytes placed into BUF if successful, otherwise
    set errno and return -1.  0 indicates EOF.
@@ -2413,7 +2413,7 @@ _GL_FUNCDECL_RPL (pread, ssize_t,
 _GL_CXXALIAS_RPL (pread, ssize_t,
                   (int fd, void *buf, size_t bufsize, off_t offset));
 # else
-#  if !1
+#  if !0
 _GL_FUNCDECL_SYS (pread, ssize_t,
                   (int fd, void *buf, size_t bufsize, off_t offset),
                   _GL_ARG_NONNULL ((2)) _GL_ATTRIBUTE_NODISCARD);
@@ -2432,7 +2432,7 @@ _GL_WARN_ON_USE (pread, "pread is unportable - "
 #endif
 
 
-#if 0
+#if 1
 /* Write at most BUFSIZE bytes from BUF into FD, starting at OFFSET.
    Return the number of bytes written if successful, otherwise
    set errno and return -1.  0 indicates nothing written.  See the
@@ -2449,7 +2449,7 @@ _GL_FUNCDECL_RPL (pwrite, ssize_t,
 _GL_CXXALIAS_RPL (pwrite, ssize_t,
                   (int fd, const void *buf, size_t bufsize, off_t offset));
 # else
-#  if !1
+#  if !0
 _GL_FUNCDECL_SYS (pwrite, ssize_t,
                   (int fd, const void *buf, size_t bufsize, off_t offset),
                   _GL_ARG_NONNULL ((2)) _GL_ATTRIBUTE_NODISCARD);
@@ -2468,11 +2468,11 @@ _GL_WARN_ON_USE (pwrite, "pwrite is unportable - "
 #endif
 
 
-#if 0
+#if 1
 /* Read up to COUNT bytes from file descriptor FD into the buffer starting
    at BUF.  See the POSIX:2008 specification
    <https://pubs.opengroup.org/onlinepubs/9699919799/functions/read.html>.  */
-# if 0
+# if 1
 #  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
 #   undef read
 #   define read rpl_read
@@ -2931,11 +2931,11 @@ _GL_WARN_ON_USE (usleep, "usleep is unportable - "
 #endif
 
 
-#if 0
+#if 1
 /* Write up to COUNT bytes starting at BUF to file descriptor FD.
    See the POSIX:2008 specification
    <https://pubs.opengroup.org/onlinepubs/9699919799/functions/write.html>.  */
-# if 0
+# if 1
 #  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
 #   undef write
 #   define write rpl_write

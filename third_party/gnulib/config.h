@@ -26,9 +26,20 @@
 /* Define to the number of bits in type 'wint_t'. */
 /* #undef BITSIZEOF_WINT_T */
 
+/* Define to 1 if using 'alloca.c'. */
+/* #undef C_ALLOCA */
+
 /* Define to a C preprocessor expression that evaluates to 1 or 0, depending
    whether the gnulib module fscanf shall be considered present. */
 #define GNULIB_FSCANF 1
+
+/* Define to a C preprocessor expression that evaluates to 1 or 0, depending
+   whether the gnulib module fstat shall be considered present. */
+#define GNULIB_FSTAT 1
+
+/* Define to a C preprocessor expression that evaluates to 1 or 0, depending
+   whether the gnulib module msvc-nothrow shall be considered present. */
+#define GNULIB_MSVC_NOTHROW 1
 
 /* Define to 1 if printf and friends should be labeled with attribute
    "__gnu_printf__" instead of "__printf__" */
@@ -37,6 +48,10 @@
 /* Define to a C preprocessor expression that evaluates to 1 or 0, depending
    whether the gnulib module scanf shall be considered present. */
 #define GNULIB_SCANF 1
+
+/* Define to a C preprocessor expression that evaluates to 1 or 0, depending
+   whether the gnulib module stat shall be considered present. */
+#define GNULIB_STAT 1
 
 /* Define to 1 when the gnulib module fgetc should be tested. */
 #define GNULIB_TEST_FGETC 1
@@ -59,6 +74,9 @@
 /* Define to 1 when the gnulib module fscanf should be tested. */
 #define GNULIB_TEST_FSCANF 1
 
+/* Define to 1 when the gnulib module fstat should be tested. */
+#define GNULIB_TEST_FSTAT 1
+
 /* Define to 1 when the gnulib module fwrite should be tested. */
 #define GNULIB_TEST_FWRITE 1
 
@@ -74,6 +92,12 @@
 /* Define to 1 when the gnulib module getline should be tested. */
 #define GNULIB_TEST_GETLINE 1
 
+/* Define to 1 when the gnulib module lseek should be tested. */
+#define GNULIB_TEST_LSEEK 1
+
+/* Define to 1 when the gnulib module pread should be tested. */
+#define GNULIB_TEST_PREAD 1
+
 /* Define to 1 when the gnulib module printf should be tested. */
 #define GNULIB_TEST_PRINTF 1
 
@@ -86,8 +110,23 @@
 /* Define to 1 when the gnulib module puts should be tested. */
 #define GNULIB_TEST_PUTS 1
 
+/* Define to 1 when the gnulib module pwrite should be tested. */
+#define GNULIB_TEST_PWRITE 1
+
+/* Define to 1 when the gnulib module raise should be tested. */
+#define GNULIB_TEST_RAISE 1
+
+/* Define to 1 when the gnulib module read should be tested. */
+#define GNULIB_TEST_READ 1
+
 /* Define to 1 when the gnulib module scanf should be tested. */
 #define GNULIB_TEST_SCANF 1
+
+/* Define to 1 when the gnulib module stat should be tested. */
+#define GNULIB_TEST_STAT 1
+
+/* Define to 1 when the gnulib module streq should be tested. */
+#define GNULIB_TEST_STREQ 1
 
 /* Define to 1 when the gnulib module vfprintf should be tested. */
 #define GNULIB_TEST_VFPRINTF 1
@@ -95,8 +134,21 @@
 /* Define to 1 when the gnulib module vprintf should be tested. */
 #define GNULIB_TEST_VPRINTF 1
 
+/* Define to 1 when the gnulib module write should be tested. */
+#define GNULIB_TEST_WRITE 1
+
+/* Define to 1 if you have 'alloca' after including <alloca.h>, a header that
+   may be supplied by this distribution. */
+#define HAVE_ALLOCA 1
+
+/* Define to 1 if <alloca.h> works. */
+/* #undef HAVE_ALLOCA_H */
+
 /* Define to 1 if bool, true and false work as per C2023. */
 #define HAVE_C_BOOL 1
+
+/* Define to 1 if the static_assert keyword works. */
+#define HAVE_C_STATIC_ASSERT 1
 
 /* Define to 1 if you have the declaration of 'ecvt', and to 0 if you don't.
    */
@@ -138,6 +190,10 @@
    */
 #define HAVE_DECL_PUTW 1
 
+/* Define to 1 if you have the declaration of 'streq', and to 0 if you don't.
+   */
+#define HAVE_DECL_STREQ 0
+
 /* Define to 1 if you have the <dlfcn.h> header file. */
 /* #undef HAVE_DLFCN_H */
 
@@ -165,8 +221,37 @@
 /* Define to 1 if the system has the type 'long long int'. */
 #define HAVE_LONG_LONG_INT 1
 
+/* Define to 1 if you have the 'lstat' function. */
+/* #undef HAVE_LSTAT */
+
+/* Define to 1 if malloc (0) returns nonnull. */
+#define HAVE_MALLOC_0_NONNULL 1
+
+/* Define if malloc and calloc set errno on allocation failure. */
+#define HAVE_MALLOC_POSIX 1
+
+/* Define to 1 if malloc-like functions do not allocate objects larger than
+   PTRDIFF_MAX bytes. */
+#define HAVE_MALLOC_PTRDIFF 1
+
 /* Define to 1 if you have the <minix/config.h> header file. */
 /* #undef HAVE_MINIX_CONFIG_H */
+
+/* Define to 1 on MSVC platforms that have the "invalid parameter handler"
+   concept. */
+#define HAVE_MSVC_INVALID_PARAMETER_HANDLER 1
+
+/* Define to 1 if you have the `pread' function. */
+/* #undef HAVE_PREAD */
+
+/* Define to 1 if you have the `pwrite' function. */
+/* #undef HAVE_PWRITE */
+
+/* Define to 1 if you have the 'raise' function. */
+#define HAVE_RAISE 1
+
+/* Define to 1 if you have the <sdkddkver.h> header file. */
+#define HAVE_SDKDDKVER_H 1
 
 /* Define to 1 if 'sig_atomic_t' is a signed integer type. */
 /* #undef HAVE_SIGNED_SIG_ATOMIC_T */
@@ -177,11 +262,17 @@
 /* Define to 1 if 'wint_t' is a signed integer type. */
 /* #undef HAVE_SIGNED_WINT_T */
 
+/* Define to 1 if the system has the type 'sigset_t'. */
+/* #undef HAVE_SIGSET_T */
+
 /* Define to 1 if you have the <stdbool.h> header file. */
 #define HAVE_STDBOOL_H 1
 
 /* Define to 1 if you have the <stdckdint.h> header file. */
 #define HAVE_STDCKDINT_H 1
+
+/* Define to 1 if you have the <stdcountof.h> header file. */
+#define HAVE_STDCOUNTOF_H 1
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #define HAVE_STDINT_H 1
@@ -198,6 +289,27 @@
 /* Define to 1 if you have the <string.h> header file. */
 #define HAVE_STRING_H 1
 
+/* Define to 1 if 'st_atimensec' is a member of 'struct stat'. */
+/* #undef HAVE_STRUCT_STAT_ST_ATIMENSEC */
+
+/* Define to 1 if 'st_atimespec.tv_nsec' is a member of 'struct stat'. */
+/* #undef HAVE_STRUCT_STAT_ST_ATIMESPEC_TV_NSEC */
+
+/* Define to 1 if 'st_atim.st__tim.tv_nsec' is a member of 'struct stat'. */
+/* #undef HAVE_STRUCT_STAT_ST_ATIM_ST__TIM_TV_NSEC */
+
+/* Define to 1 if 'st_atim.tv_nsec' is a member of 'struct stat'. */
+/* #undef HAVE_STRUCT_STAT_ST_ATIM_TV_NSEC */
+
+/* Define to 1 if 'st_birthtimensec' is a member of 'struct stat'. */
+/* #undef HAVE_STRUCT_STAT_ST_BIRTHTIMENSEC */
+
+/* Define to 1 if 'st_birthtimespec.tv_nsec' is a member of 'struct stat'. */
+/* #undef HAVE_STRUCT_STAT_ST_BIRTHTIMESPEC_TV_NSEC */
+
+/* Define to 1 if 'st_birthtim.tv_nsec' is a member of 'struct stat'. */
+/* #undef HAVE_STRUCT_STAT_ST_BIRTHTIM_TV_NSEC */
+
 /* Define to 1 if you have the 'symlink' function. */
 /* #undef HAVE_SYMLINK */
 
@@ -207,8 +319,14 @@
 /* Define to 1 if you have the <sys/inttypes.h> header file. */
 /* #undef HAVE_SYS_INTTYPES_H */
 
+/* Define to 1 if you have the <sys/param.h> header file. */
+#define HAVE_SYS_PARAM_H 1
+
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #define HAVE_SYS_STAT_H 1
+
+/* Define to 1 if you have the <sys/time.h> header file. */
+#define HAVE_SYS_TIME_H 1
 
 /* Define to 1 if you have the <sys/types.h> header file. */
 #define HAVE_SYS_TYPES_H 1
@@ -236,6 +354,9 @@
 
 /* Define to 1 if O_NOFOLLOW works, 0 otherwise. */
 #define HAVE_WORKING_O_NOFOLLOW 0
+
+/* Define to 1 if you have the '_set_invalid_parameter_handler' function. */
+#define HAVE__SET_INVALID_PARAMETER_HANDLER 1
 
 /* Define to 1 if you have the `__fseterr' function. */
 /* #undef HAVE___FSETERR */
@@ -352,6 +473,9 @@
 # define _GL_INLINE_HEADER_END
 #endif
 
+/* Define to 1 if lseek does not detect pipes. */
+#define LSEEK_PIPE_BROKEN 1
+
 /* Define to the sub-directory where libtool stores uninstalled libraries. */
 #define LT_OBJDIR ".libs/"
 
@@ -382,6 +506,10 @@
    'ptrdiff_t'. */
 /* #undef PTRDIFF_T_SUFFIX */
 
+/* Define to 1 if stat needs help when passed a file name with a trailing
+   slash */
+/* #undef REPLACE_FUNC_STAT_FILE */
+
 /* Define to l, ll, u, ul, ull, etc., as suitable for constants of type
    'sig_atomic_t'. */
 /* #undef SIG_ATOMIC_T_SUFFIX */
@@ -390,10 +518,25 @@
    'size_t'. */
 /* #undef SIZE_T_SUFFIX */
 
+/* If using the C implementation of alloca, define if you know the
+   direction of stack growth for your system; otherwise it will be
+   automatically deduced at runtime.
+	STACK_DIRECTION > 0 => grows toward higher addresses
+	STACK_DIRECTION < 0 => grows toward lower addresses
+	STACK_DIRECTION = 0 => direction of growth unknown */
+/* #undef STACK_DIRECTION */
+
+/* Define to 1 if the 'S_IS*' macros in <sys/stat.h> do not work properly. */
+/* #undef STAT_MACROS_BROKEN */
+
 /* Define to 1 if all of the C89 standard headers exist (not just the ones
    required in a freestanding environment). This macro is provided for
    backward compatibility; new code need not use it. */
 #define STDC_HEADERS 1
+
+/* Define to 1 if the type of the st_atim member of a struct stat is struct
+   timespec. */
+/* #undef TYPEOF_STRUCT_STAT_ST_ATIM_IS_STRUCT_TIMESPEC */
 
 /* Define to enable the declarations of ISO C 23 Annex K types and functions.  */
 #if !(defined __STDC_WANT_LIB_EXT1__ && __STDC_WANT_LIB_EXT1__)
@@ -508,6 +651,9 @@
    'wint_t'. */
 /* #undef WINT_T_SUFFIX */
 
+/* Number of bits in a file offset, on hosts where this is settable. */
+#define _FILE_OFFSET_BITS 64
+
 /* True if the compiler says it groks GNU C version MAJOR.MINOR.
     Except that
       - clang groks GNU C 4.2, even on Windows, where it does not define
@@ -531,6 +677,9 @@
 
 /* Define to enable the declarations of ISO C 11 types and functions. */
 /* #undef _ISOC11_SOURCE */
+
+/* Define to 1 on platforms where this makes off_t a 64-bit type. */
+/* #undef _LARGE_FILES */
 
 /* Define so that AIX headers are more compatible with GNU/Linux. */
 #define _LINUX_SOURCE_COMPAT 1
@@ -563,8 +712,14 @@
 #endif
 
 
+/* Number of bits in time_t, on hosts where this is settable. */
+/* #undef _TIME_BITS */
+
 /* For standard stat data types on VMS. */
 #define _USE_STD_STAT 1
+
+/* Define to 1 on platforms where this makes time_t a 64-bit type. */
+/* #undef __MINGW_USE_VC2005_COMPAT */
 
 /* Define to 1 if the system <stdint.h> predates C++11. */
 /* #undef __STDC_CONSTANT_MACROS */
@@ -1450,6 +1605,9 @@
 #endif
 
 
+/* Define as 'int' if <sys/types.h> doesn't define. */
+#define gid_t int
+
 /* Work around a bug in Apple GCC 4.0.1 build 5465: In C99 mode, it supports
    the ISO C 99 semantics of 'extern inline' (unlike the GNU C semantics of
    earlier versions), but does not display it by setting __GNUC_STDC_INLINE__.
@@ -1478,6 +1636,9 @@
 
 /* Define to 'int' if <sys/types.h> does not define. */
 /* #undef mode_t */
+
+/* Define to the type of st_nlink in struct stat, or a supertype. */
+#define nlink_t int
 
 /* Define as a signed integer type capable of holding a process identifier. */
 /* #undef pid_t */
@@ -1527,8 +1688,14 @@
 #endif
 
 
+/* Define as 'unsigned int' if <stddef.h> doesn't define. */
+/* #undef size_t */
+
 /* Define as a signed type of the same size as size_t. */
 /* #undef ssize_t */
+
+/* Define as 'int' if <sys/types.h> doesn't define. */
+#define uid_t int
 
 #if !(defined __cplusplus \
       ? 1 \
@@ -1551,6 +1718,32 @@
 # if !true
 #  define true (!false)
 # endif
+#endif
+
+#if (!(defined __clang__ \
+       ? (defined __cplusplus \
+          ? __cplusplus >= 201703L \
+          : __STDC_VERSION__ >= 202000L && __clang_major__ >= 16 \
+            && !defined __sun) \
+       : (defined __GNUC__ \
+          ? (defined __cplusplus \
+             ? __cplusplus >= 201103L && __GNUG__ >= 6 \
+             : __STDC_VERSION__ >= 202000L && __GNUC__ >= 13 \
+               && !defined __sun) \
+          : defined HAVE_C_STATIC_ASSERT)) \
+     && !defined assert \
+     && (!defined __cplusplus \
+         || (__cpp_static_assert < 201411 \
+             && __GNUG__ < 6 && __clang_major__ < 6)))
+ #include <assert.h>
+ #undef/**/assert
+ /* Solaris 11.4 <assert.h> defines static_assert as a macro with 2 arguments.
+    We need it also to be invocable with a single argument.
+    Haiku 2022 <assert.h> does not define static_assert at all.  */
+ #if (__STDC_VERSION__ - 0 >= 201112L) && !defined __cplusplus
+  #undef/**/static_assert
+  #define static_assert _Static_assert
+ #endif
 #endif
 
 #if defined __GNUC__ && __GNUC__ >= 15 && !defined __clang__
