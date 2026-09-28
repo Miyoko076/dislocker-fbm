@@ -794,8 +794,8 @@ _GL_WARN_EXTERN_C int _gl_warn_on_use
 
 /* Make _GL_ATTRIBUTE_DEALLOC_FREE work, even though <stdlib.h> may not have
    been included yet.  */
-#if 0
-# if (0 && !defined free \
+#if 1
+# if (1 && !defined free \
       && !(defined __cplusplus && defined GNULIB_NAMESPACE))
 /* We can't do '#define free rpl_free' here.  */
 #  if defined __cplusplus && (__GLIBC__ + (__GLIBC_MINOR__ >= 14) > 2)
@@ -1205,17 +1205,17 @@ _GL_CXXALIAS_SYS (fzprintf, off64_t,
                   (FILE *restrict fp, const char *restrict format, ...));
 #endif
 
-#if 0 || 1
+#if 1 || 1
 /* Prints formatted output to stream FP.
    Returns the number of bytes written to the stream.  Upon failure,
    returns a negative value with the stream's error indicator set.  */
-# if (0 && 0) \
+# if (1 && 1) \
      || (1 && 0 && (0 || 0))
 #  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
 #   define fprintf rpl_fprintf
 #  endif
 #  define GNULIB_overrides_fprintf 1
-#  if 0 || 0
+#  if 1 || 1
 _GL_FUNCDECL_RPL (fprintf, int,
                   (FILE *restrict fp, const char *restrict format, ...),
                   _GL_ATTRIBUTE_FORMAT_PRINTF_STANDARD (2, 3)
@@ -1241,7 +1241,7 @@ _GL_CXXALIASWARN (fprintf);
 #  define fprintf _gl_consolesafe_fprintf
 # endif
 #endif
-#if !0 && defined GNULIB_POSIXCHECK
+#if !1 && defined GNULIB_POSIXCHECK
 /* Assume fprintf is always declared.  */
 _GL_WARN_ON_USE (fprintf, "fprintf is not always POSIX compliant - "
                  "use gnulib module fprintf-posix for portable "
@@ -1938,7 +1938,7 @@ _GL_CXXALIAS_SYS (zprintf, off64_t, (const char *restrict format, ...));
 /* Don't break __attribute__((format(printf,M,N))).  */
 #    define printf __printf__
 #   endif
-#   if 0 || 0
+#   if 0 || 1
 _GL_FUNCDECL_RPL_1 (__printf__, int,
                     (const char *restrict format, ...)
                     __asm__ (
@@ -2483,7 +2483,7 @@ _GL_WARN_ON_USE (vdprintf, "vdprintf is unportable - "
 # endif
 #endif
 
-#if 0
+#if 1
 /* Prints formatted output to stream FP.
    Returns the number of bytes written to the stream.  Upon failure,
    returns -1 with the stream's error indicator set.
@@ -2501,17 +2501,17 @@ _GL_CXXALIAS_SYS (vfzprintf, off64_t,
                    const char *restrict format, va_list args));
 #endif
 
-#if 0 || 1
+#if 1 || 1
 /* Prints formatted output to stream FP.
    Returns the number of bytes written to the stream.  Upon failure,
    returns a negative value with the stream's error indicator set.  */
-# if (0 && 0) \
+# if (1 && 1) \
      || (1 && 0 && (0 || 0))
 #  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
 #   define vfprintf rpl_vfprintf
 #  endif
 #  define GNULIB_overrides_vfprintf 1
-#  if 0
+#  if 1
 _GL_FUNCDECL_RPL (vfprintf, int,
                   (FILE *restrict fp,
                    const char *restrict format, va_list args),
@@ -2544,7 +2544,7 @@ _GL_CXXALIASWARN (vfprintf);
 #  define vfprintf _gl_consolesafe_vfprintf
 # endif
 #endif
-#if !0 && defined GNULIB_POSIXCHECK
+#if !1 && defined GNULIB_POSIXCHECK
 /* Assume vfprintf is always declared.  */
 _GL_WARN_ON_USE (vfprintf, "vfprintf is not always POSIX compliant - "
                  "use gnulib module vfprintf-posix for portable "
@@ -2601,7 +2601,7 @@ _GL_CXXALIAS_SYS (vzprintf, off64_t,
 #   define vprintf rpl_vprintf
 #  endif
 #  define GNULIB_overrides_vprintf 1
-#  if 0 || 0
+#  if 0 || 1
 _GL_FUNCDECL_RPL (vprintf, int, (const char *restrict format, va_list args),
                                 _GL_ATTRIBUTE_FORMAT_PRINTF_STANDARD (1, 0)
                                 _GL_ARG_NONNULL ((1)));

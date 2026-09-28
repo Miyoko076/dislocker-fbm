@@ -11,6 +11,9 @@
 #define _GL_CONFIG_H_INCLUDED 1
 
 
+/* Define if building universal (internal helper macro) */
+/* #undef AC_APPLE_UNIVERSAL_BUILD */
+
 /* Define to the number of bits in type 'ptrdiff_t'. */
 /* #undef BITSIZEOF_PTRDIFF_T */
 
@@ -21,13 +24,43 @@
 /* #undef BITSIZEOF_SIZE_T */
 
 /* Define to the number of bits in type 'wchar_t'. */
-/* #undef BITSIZEOF_WCHAR_T */
+#define BITSIZEOF_WCHAR_T 16
 
 /* Define to the number of bits in type 'wint_t'. */
 /* #undef BITSIZEOF_WINT_T */
 
+/* Define if you wish *printf() functions that have a safe handling of
+   non-IEEE-754 'long double' values. */
+#define CHECK_PRINTF_SAFE 1
+
 /* Define to 1 if using 'alloca.c'. */
 /* #undef C_ALLOCA */
+
+/* Define as the bit index in the word where to find bit 0 of the exponent of
+   'double'. */
+#define DBL_EXPBIT0_BIT 20
+
+/* Define as the word index where to find the exponent of 'double'. */
+#define DBL_EXPBIT0_WORD 1
+
+/* Define as the bit index in the word where to find the sign of 'double'. */
+/* #undef DBL_SIGNBIT_BIT */
+
+/* Define as the word index where to find the sign of 'double'. */
+/* #undef DBL_SIGNBIT_WORD */
+
+/* Define as the bit index in the word where to find bit 0 of the exponent of
+   'float'. */
+#define FLT_EXPBIT0_BIT 23
+
+/* Define as the word index where to find the exponent of 'float'. */
+#define FLT_EXPBIT0_WORD 0
+
+/* Define as the bit index in the word where to find the sign of 'float'. */
+/* #undef FLT_SIGNBIT_BIT */
+
+/* Define as the word index where to find the sign of 'float'. */
+/* #undef FLT_SIGNBIT_WORD */
 
 /* Define to a C preprocessor expression that evaluates to 1 or 0, depending
    whether the gnulib module fscanf shall be considered present. */
@@ -36,6 +69,10 @@
 /* Define to a C preprocessor expression that evaluates to 1 or 0, depending
    whether the gnulib module fstat shall be considered present. */
 #define GNULIB_FSTAT 1
+
+/* Define to a C preprocessor expression that evaluates to 1 or 0, depending
+   whether the gnulib module localeconv shall be considered present. */
+#define GNULIB_LOCALECONV 1
 
 /* Define to a C preprocessor expression that evaluates to 1 or 0, depending
    whether the gnulib module msvc-nothrow shall be considered present. */
@@ -53,6 +90,48 @@
    whether the gnulib module stat shall be considered present. */
 #define GNULIB_STAT 1
 
+/* Define to 1 when the gnulib module c32isalnum should be tested. */
+#define GNULIB_TEST_C32ISALNUM 1
+
+/* Define to 1 when the gnulib module c32isalpha should be tested. */
+#define GNULIB_TEST_C32ISALPHA 1
+
+/* Define to 1 when the gnulib module c32isblank should be tested. */
+#define GNULIB_TEST_C32ISBLANK 1
+
+/* Define to 1 when the gnulib module c32iscntrl should be tested. */
+#define GNULIB_TEST_C32ISCNTRL 1
+
+/* Define to 1 when the gnulib module c32isdigit should be tested. */
+#define GNULIB_TEST_C32ISDIGIT 1
+
+/* Define to 1 when the gnulib module c32isgraph should be tested. */
+#define GNULIB_TEST_C32ISGRAPH 1
+
+/* Define to 1 when the gnulib module c32islower should be tested. */
+#define GNULIB_TEST_C32ISLOWER 1
+
+/* Define to 1 when the gnulib module c32isprint should be tested. */
+#define GNULIB_TEST_C32ISPRINT 1
+
+/* Define to 1 when the gnulib module c32ispunct should be tested. */
+#define GNULIB_TEST_C32ISPUNCT 1
+
+/* Define to 1 when the gnulib module c32isspace should be tested. */
+#define GNULIB_TEST_C32ISSPACE 1
+
+/* Define to 1 when the gnulib module c32isupper should be tested. */
+#define GNULIB_TEST_C32ISUPPER 1
+
+/* Define to 1 when the gnulib module c32isxdigit should be tested. */
+#define GNULIB_TEST_C32ISXDIGIT 1
+
+/* Define to 1 when the gnulib module c32tolower should be tested. */
+#define GNULIB_TEST_C32TOLOWER 1
+
+/* Define to 1 when the gnulib module c32width should be tested. */
+#define GNULIB_TEST_C32WIDTH 1
+
 /* Define to 1 when the gnulib module fgetc should be tested. */
 #define GNULIB_TEST_FGETC 1
 
@@ -62,6 +141,9 @@
 /* Define to 1 when the gnulib module fprintf should be tested. */
 #define GNULIB_TEST_FPRINTF 1
 
+/* Define to 1 when the gnulib module fprintf-posix should be tested. */
+#define GNULIB_TEST_FPRINTF_POSIX 1
+
 /* Define to 1 when the gnulib module fputc should be tested. */
 #define GNULIB_TEST_FPUTC 1
 
@@ -70,6 +152,15 @@
 
 /* Define to 1 when the gnulib module fread should be tested. */
 #define GNULIB_TEST_FREAD 1
+
+/* Define to 1 when the gnulib module free-posix should be tested. */
+#define GNULIB_TEST_FREE_POSIX 1
+
+/* Define to 1 when the gnulib module frexp should be tested. */
+#define GNULIB_TEST_FREXP 1
+
+/* Define to 1 when the gnulib module frexpl should be tested. */
+#define GNULIB_TEST_FREXPL 1
 
 /* Define to 1 when the gnulib module fscanf should be tested. */
 #define GNULIB_TEST_FSCANF 1
@@ -92,8 +183,44 @@
 /* Define to 1 when the gnulib module getline should be tested. */
 #define GNULIB_TEST_GETLINE 1
 
+/* Define to 1 when the gnulib module iswblank should be tested. */
+#define GNULIB_TEST_ISWBLANK 1
+
+/* Define to 1 when the gnulib module iswdigit should be tested. */
+#define GNULIB_TEST_ISWDIGIT 1
+
+/* Define to 1 when the gnulib module iswpunct should be tested. */
+#define GNULIB_TEST_ISWPUNCT 1
+
+/* Define to 1 when the gnulib module iswxdigit should be tested. */
+#define GNULIB_TEST_ISWXDIGIT 1
+
+/* Define to 1 when the gnulib module localeconv should be tested. */
+#define GNULIB_TEST_LOCALECONV 1
+
 /* Define to 1 when the gnulib module lseek should be tested. */
 #define GNULIB_TEST_LSEEK 1
+
+/* Define to 1 when the gnulib module mbrtoc32 should be tested. */
+#define GNULIB_TEST_MBRTOC32 1
+
+/* Define to 1 when the gnulib module mbrtowc should be tested. */
+#define GNULIB_TEST_MBRTOWC 1
+
+/* Define to 1 when the gnulib module mbsinit should be tested. */
+#define GNULIB_TEST_MBSINIT 1
+
+/* Define to 1 when the gnulib module mbsnlen should be tested. */
+#define GNULIB_TEST_MBSNLEN 1
+
+/* Define to 1 when the gnulib module mbszero should be tested. */
+#define GNULIB_TEST_MBSZERO 1
+
+/* Define to 1 when the gnulib module memchr should be tested. */
+#define GNULIB_TEST_MEMCHR 1
+
+/* Define to 1 when the gnulib module memeq should be tested. */
+#define GNULIB_TEST_MEMEQ 1
 
 /* Define to 1 when the gnulib module pread should be tested. */
 #define GNULIB_TEST_PREAD 1
@@ -122,6 +249,12 @@
 /* Define to 1 when the gnulib module scanf should be tested. */
 #define GNULIB_TEST_SCANF 1
 
+/* Define to 1 when the gnulib module setlocale_null should be tested. */
+#define GNULIB_TEST_SETLOCALE_NULL 1
+
+/* Define to 1 when the gnulib module signbit-no-cxx should be tested. */
+#define GNULIB_TEST_SIGNBIT_NO_CXX 1
+
 /* Define to 1 when the gnulib module stat should be tested. */
 #define GNULIB_TEST_STAT 1
 
@@ -131,11 +264,24 @@
 /* Define to 1 when the gnulib module vfprintf should be tested. */
 #define GNULIB_TEST_VFPRINTF 1
 
+/* Define to 1 when the gnulib module vfprintf-posix should be tested. */
+#define GNULIB_TEST_VFPRINTF_POSIX 1
+
+/* Define to 1 when the gnulib module vfzprintf should be tested. */
+#define GNULIB_TEST_VFZPRINTF 1
+
 /* Define to 1 when the gnulib module vprintf should be tested. */
 #define GNULIB_TEST_VPRINTF 1
 
+/* Define to 1 when the gnulib module wcwidth should be tested. */
+#define GNULIB_TEST_WCWIDTH 1
+
 /* Define to 1 when the gnulib module write should be tested. */
 #define GNULIB_TEST_WRITE 1
+
+/* Define to a C preprocessor expression that evaluates to 1 or 0, depending
+   whether the gnulib module vfprintf-posix shall be considered present. */
+#define GNULIB_VFPRINTF_POSIX 1
 
 /* Define to 1 if you have 'alloca' after including <alloca.h>, a header that
    may be supplied by this distribution. */
@@ -144,11 +290,45 @@
 /* Define to 1 if <alloca.h> works. */
 /* #undef HAVE_ALLOCA_H */
 
+/* Define to 1 if you have the <bp-sym.h> header file. */
+/* #undef HAVE_BP_SYM_H */
+
+/* Define if the copysignf function is declared in <math.h> and available in
+   libc. */
+/* #undef HAVE_COPYSIGNF_IN_LIBC */
+
+/* Define if the copysignl function is declared in <math.h> and available in
+   libc. */
+/* #undef HAVE_COPYSIGNL_IN_LIBC */
+
+/* Define if the copysign function is declared in <math.h> and available in
+   libc. */
+/* #undef HAVE_COPYSIGN_IN_LIBC */
+
+/* Define to 1 if you have the <crtdefs.h> header file. */
+#define HAVE_CRTDEFS_H 1
+
 /* Define to 1 if bool, true and false work as per C2023. */
 #define HAVE_C_BOOL 1
 
 /* Define to 1 if the static_assert keyword works. */
 #define HAVE_C_STATIC_ASSERT 1
+
+/* Define to 1 if you have the declaration of 'alarm', and to 0 if you don't.
+   */
+#define HAVE_DECL_ALARM 0
+
+/* Define to 1 if you have the declaration of 'copysign', and to 0 if you
+   don't. */
+/* #undef HAVE_DECL_COPYSIGN */
+
+/* Define to 1 if you have the declaration of 'copysignf', and to 0 if you
+   don't. */
+/* #undef HAVE_DECL_COPYSIGNF */
+
+/* Define to 1 if you have the declaration of 'copysignl', and to 0 if you
+   don't. */
+/* #undef HAVE_DECL_COPYSIGNL */
 
 /* Define to 1 if you have the declaration of 'ecvt', and to 0 if you don't.
    */
@@ -186,6 +366,22 @@
    */
 #define HAVE_DECL_GETW 1
 
+/* Define to 1 if you have the declaration of 'iswblank', and to 0 if you
+   don't. */
+#define HAVE_DECL_ISWBLANK 1
+
+/* Define to 1 if you have the declaration of 'mbrtowc', and to 0 if you
+   don't. */
+/* #undef HAVE_DECL_MBRTOWC */
+
+/* Define to 1 if you have the declaration of 'mbsinit', and to 0 if you
+   don't. */
+/* #undef HAVE_DECL_MBSINIT */
+
+/* Define to 1 if you have the declaration of 'memeq', and to 0 if you don't.
+   */
+#define HAVE_DECL_MEMEQ 0
+
 /* Define to 1 if you have the declaration of 'putw', and to 0 if you don't.
    */
 #define HAVE_DECL_PUTW 1
@@ -194,11 +390,39 @@
    */
 #define HAVE_DECL_STREQ 0
 
+/* Define to 1 if you have the declaration of 'towlower', and to 0 if you
+   don't. */
+/* #undef HAVE_DECL_TOWLOWER */
+
+/* Define to 1 if you have the declaration of 'wcsdup', and to 0 if you don't.
+   */
+#define HAVE_DECL_WCSDUP 1
+
+/* Define to 1 if you have the declaration of 'wcwidth', and to 0 if you
+   don't. */
+#define HAVE_DECL_WCWIDTH 0
+
+/* Define to 1 if you have the declaration of '_snprintf', and to 0 if you
+   don't. */
+#define HAVE_DECL__SNPRINTF 1
+
 /* Define to 1 if you have the <dlfcn.h> header file. */
 /* #undef HAVE_DLFCN_H */
 
+/* Define to 1 if you have the <features.h> header file. */
+/* #undef HAVE_FEATURES_H */
+
 /* Define to 1 if you have the 'flockfile' function. */
 /* #undef HAVE_FLOCKFILE */
+
+/* Define if the 'free' function is guaranteed to preserve errno. */
+/* #undef HAVE_FREE_POSIX */
+
+/* Define if the frexpl function is available in libc. */
+#define HAVE_FREXPL_IN_LIBC 1
+
+/* Define if the frexp function is available in libc. */
+#define HAVE_FREXP_IN_LIBC 1
 
 /* Define to 1 if you have the 'funlockfile' function. */
 /* #undef HAVE_FUNLOCKFILE */
@@ -209,11 +433,39 @@
 /* Define to 1 if you have the `getline' function. */
 /* #undef HAVE_GETLINE */
 
+/* Define if you have the 'intmax_t' type in <stdint.h> or <inttypes.h>. */
+#define HAVE_INTMAX_T 1
+
 /* Define to 1 if you have the <inttypes.h> header file. */
 #define HAVE_INTTYPES_H 1
 
+/* Define if <inttypes.h> exists, doesn't clash with <sys/types.h>, and
+   declares uintmax_t. */
+#define HAVE_INTTYPES_H_WITH_UINTMAX 1
+
+/* Define if the isnan(double) function is available in libc. */
+#define HAVE_ISNAND_IN_LIBC 1
+
+/* Define if the isnan(float) function is available in libc. */
+#define HAVE_ISNANF_IN_LIBC 1
+
+/* Define if the isnan(long double) function is available in libc. */
+#define HAVE_ISNANL_IN_LIBC 1
+
+/* Define to 1 if you have the `iswblank' function. */
+#define HAVE_ISWBLANK 1
+
+/* Define to 1 if you have the 'iswcntrl' function. */
+#define HAVE_ISWCNTRL 1
+
 /* Define if you have <langinfo.h> and nl_langinfo(CODESET). */
 /* #undef HAVE_LANGINFO_CODESET */
+
+/* Define if the ldexpl function is available in libc. */
+#define HAVE_LDEXPL_IN_LIBC 1
+
+/* Define if the ldexp function is available in libc. */
+#define HAVE_LDEXP_IN_LIBC 1
 
 /* Define to 1 if you have the <limits.h> header file. */
 #define HAVE_LIMITS_H 1
@@ -234,21 +486,51 @@
    PTRDIFF_MAX bytes. */
 #define HAVE_MALLOC_PTRDIFF 1
 
+/* Define to 1 if you have the <math.h> header file. */
+#define HAVE_MATH_H 1
+
+/* Define to 1 if you have the 'mbrtowc' function. */
+#define HAVE_MBRTOWC 1
+
+/* Define to 1 if you have the 'mbsinit' function. */
+#define HAVE_MBSINIT 1
+
+/* Define to 1 if <wchar.h> declares mbstate_t. */
+#define HAVE_MBSTATE_T 1
+
 /* Define to 1 if you have the <minix/config.h> header file. */
 /* #undef HAVE_MINIX_CONFIG_H */
+
+/* Define to 1 if <limits.h> defines the MIN and MAX macros. */
+/* #undef HAVE_MINMAX_IN_LIMITS_H */
+
+/* Define to 1 if <sys/param.h> defines the MIN and MAX macros. */
+/* #undef HAVE_MINMAX_IN_SYS_PARAM_H */
+
+/* Define to 1 if you have the 'mprotect' function. */
+#define HAVE_MPROTECT 1
 
 /* Define to 1 on MSVC platforms that have the "invalid parameter handler"
    concept. */
 #define HAVE_MSVC_INVALID_PARAMETER_HANDLER 1
 
+/* Define to 1 if you have the `nl_langinfo' function. */
+/* #undef HAVE_NL_LANGINFO */
+
 /* Define to 1 if you have the `pread' function. */
 /* #undef HAVE_PREAD */
+
+/* Define if you have the <pthread.h> header and the POSIX threads API. */
+#define HAVE_PTHREAD_API 1
 
 /* Define to 1 if you have the `pwrite' function. */
 /* #undef HAVE_PWRITE */
 
 /* Define to 1 if you have the 'raise' function. */
 #define HAVE_RAISE 1
+
+/* Define to 1 if 'long double' and 'double' have the same representation. */
+/* #undef HAVE_SAME_LONG_DOUBLE_AS_DOUBLE */
 
 /* Define to 1 if you have the <sdkddkver.h> header file. */
 #define HAVE_SDKDDKVER_H 1
@@ -265,6 +547,18 @@
 /* Define to 1 if the system has the type 'sigset_t'. */
 /* #undef HAVE_SIGSET_T */
 
+/* Define to 1 if you have the 'snprintf' function. */
+#define HAVE_SNPRINTF 1
+
+/* Define if the return value of the snprintf function is the number of of
+   bytes (excluding the terminating NUL) that would have been produced if the
+   buffer had been large enough. */
+#define HAVE_SNPRINTF_RETVAL_C99 1
+
+/* Define if the string produced by the snprintf function is always NUL
+   terminated. */
+#define HAVE_SNPRINTF_TRUNCATION_C99 1
+
 /* Define to 1 if you have the <stdbool.h> header file. */
 #define HAVE_STDBOOL_H 1
 
@@ -277,6 +571,10 @@
 /* Define to 1 if you have the <stdint.h> header file. */
 #define HAVE_STDINT_H 1
 
+/* Define if <stdint.h> exists, doesn't clash with <sys/types.h>, and declares
+   uintmax_t. */
+#define HAVE_STDINT_H_WITH_UINTMAX 1
+
 /* Define to 1 if you have the <stdio.h> header file. */
 #define HAVE_STDIO_H 1
 
@@ -288,6 +586,15 @@
 
 /* Define to 1 if you have the <string.h> header file. */
 #define HAVE_STRING_H 1
+
+/* Define to 1 if you have the 'strnlen' function. */
+#define HAVE_STRNLEN 1
+
+/* Define to 1 if 'decimal_point' is a member of 'struct lconv'. */
+#define HAVE_STRUCT_LCONV_DECIMAL_POINT 1
+
+/* Define to 1 if 'int_p_cs_precedes' is a member of 'struct lconv'. */
+/* #undef HAVE_STRUCT_LCONV_INT_P_CS_PRECEDES */
 
 /* Define to 1 if 'st_atimensec' is a member of 'struct stat'. */
 /* #undef HAVE_STRUCT_STAT_ST_ATIMENSEC */
@@ -319,6 +626,9 @@
 /* Define to 1 if you have the <sys/inttypes.h> header file. */
 /* #undef HAVE_SYS_INTTYPES_H */
 
+/* Define to 1 if you have the <sys/mman.h> header file. */
+/* #undef HAVE_SYS_MMAN_H */
+
 /* Define to 1 if you have the <sys/param.h> header file. */
 #define HAVE_SYS_PARAM_H 1
 
@@ -331,20 +641,64 @@
 /* Define to 1 if you have the <sys/types.h> header file. */
 #define HAVE_SYS_TYPES_H 1
 
+/* Define to 1 if you have the <threads.h> header file. */
+/* #undef HAVE_THREADS_H */
+
+/* Define to 1 if you have the 'towlower' function. */
+/* #undef HAVE_TOWLOWER */
+
+/* Define to 1 if you have the <uchar.h> header file. */
+#define HAVE_UCHAR_H 1
+
 /* Define to 1 if you have the <unistd.h> header file. */
 #define HAVE_UNISTD_H 1
+
+/* Define to 1 if you have the <unistring/woe32dll.h> header file. */
+/* #undef HAVE_UNISTRING_WOE32DLL_H */
 
 /* Define to 1 if the system has the type 'unsigned long long int'. */
 #define HAVE_UNSIGNED_LONG_LONG_INT 1
 
+/* Define to 1 if you have the 'vasnprintf' function. */
+/* #undef HAVE_VASNPRINTF */
+
 /* Define to 1 if you have the 'vasprintf' function. */
 #define HAVE_VASPRINTF 1
+
+/* Define to 1 or 0, depending whether the compiler supports simple visibility
+   declarations. */
+/* #undef HAVE_VISIBILITY */
 
 /* Define to 1 if you have the <wchar.h> header file. */
 #define HAVE_WCHAR_H 1
 
+/* Define to 1 if you have the 'wcrtomb' function. */
+#define HAVE_WCRTOMB 1
+
+/* Define to 1 if you have the 'wcslen' function. */
+#define HAVE_WCSLEN 1
+
+/* Define to 1 if you have the <wctype.h> header file. */
+#define HAVE_WCTYPE_H 1
+
+/* Define to 1 if you have the 'wcwidth' function. */
+/* #undef HAVE_WCWIDTH */
+
+/* Define to 1 if the compiler and linker support weak declarations of
+   symbols. */
+/* #undef HAVE_WEAK_SYMBOLS */
+
+/* Define to 1 if <locale.h> defines the _locale_t type. */
+#define HAVE_WINDOWS_LOCALE_T 1
+
 /* Define if you have the 'wint_t' type. */
 #define HAVE_WINT_T 1
+
+/* Define if the c32rtomb function basically works. */
+#define HAVE_WORKING_C32RTOMB 1
+
+/* Define if the mbrtoc32 function basically works. */
+/* #undef HAVE_WORKING_MBRTOC32 */
 
 /* Define to 1 if O_DIRECTORY works, 0 otherwise. */
 #define HAVE_WORKING_O_DIRECTORY 0
@@ -354,6 +708,9 @@
 
 /* Define to 1 if O_NOFOLLOW works, 0 otherwise. */
 #define HAVE_WORKING_O_NOFOLLOW 0
+
+/* Define to 1 if you have the <xlocale.h> header file. */
+/* #undef HAVE_XLOCALE_H */
 
 /* Define to 1 if you have the '_set_invalid_parameter_handler' function. */
 #define HAVE__SET_INVALID_PARAMETER_HANDLER 1
@@ -473,11 +830,69 @@
 # define _GL_INLINE_HEADER_END
 #endif
 
+/* Define as the bit index in the word where to find bit 0 of the exponent of
+   'long double'. */
+#define LDBL_EXPBIT0_BIT 0
+
+/* Define as the word index where to find the exponent of 'long double'. */
+#define LDBL_EXPBIT0_WORD 2
+
+/* Define as the bit index in the word where to find the sign of 'long
+   double'. */
+/* #undef LDBL_SIGNBIT_BIT */
+
+/* Define as the word index where to find the sign of 'long double'. */
+/* #undef LDBL_SIGNBIT_WORD */
+
 /* Define to 1 if lseek does not detect pipes. */
 #define LSEEK_PIPE_BROKEN 1
 
 /* Define to the sub-directory where libtool stores uninstalled libraries. */
 #define LT_OBJDIR ".libs/"
+
+/* Define to a substitute value for mmap()'s MAP_ANONYMOUS flag. */
+/* #undef MAP_ANONYMOUS */
+
+/* Define if the mbrtoc32 function does not return (size_t) -2 for empty
+   input. */
+/* #undef MBRTOC32_EMPTY_INPUT_BUG */
+
+/* Define if the mbrtoc32 function may signal encoding errors in the C locale.
+   */
+#define MBRTOC32_IN_C_LOCALE_MAYBE_EILSEQ 1
+
+/* Define if the mbrtoc32 function in the C locale may work like in an
+   ISO-8859-1 locale. */
+/* #undef MBRTOC32_IN_C_LOCALE_MAYBE_LIKE_ISO_8859 */
+
+/* Define if the mbrtoc32 function does not accept the input bytes one-by-one.
+   */
+/* #undef MBRTOC32_MULTIBYTE_LOCALE_BUG */
+
+/* Define if the mbrtowc function does not return (size_t) -2 for empty input.
+   */
+#define MBRTOWC_EMPTY_INPUT_BUG 1
+
+/* Define if the mbrtowc function does not recognize some invalid UTF-8 byte
+   sequences. */
+/* #undef MBRTOWC_INVALID_UTF8_BUG */
+
+/* Define if the mbrtowc function may signal encoding errors in the C locale.
+   */
+/* #undef MBRTOWC_IN_C_LOCALE_MAYBE_EILSEQ */
+
+/* Define if the mbrtowc function has the NULL pwc argument bug. */
+/* #undef MBRTOWC_NULL_ARG1_BUG */
+
+/* Define if the mbrtowc function does not return 0 for a NUL character. */
+/* #undef MBRTOWC_NUL_RETVAL_BUG */
+
+/* Define if the mbrtowc function returns a wrong return value. */
+#define MBRTOWC_RETVAL_BUG 1
+
+/* Define if the mbrtowc function stores a wide character when reporting
+   incomplete input. */
+#define MBRTOWC_STORES_INCOMPLETE_BUG 1
 
 /* Use GNU style printf and scanf.  */
 #ifndef __USE_MINGW_ANSI_STDIO
@@ -487,6 +902,70 @@
 
 /* Define to 1 on musl libc. */
 /* #undef MUSL_LIBC */
+
+/* Define if the vasnprintf implementation needs special code for the 'a' and
+   'A' directives. */
+/* #undef NEED_PRINTF_DIRECTIVE_A */
+
+/* Define if the vasnprintf implementation needs special code for the 'b'
+   directive. */
+/* #undef NEED_PRINTF_DIRECTIVE_B */
+
+/* Define if the vasnprintf implementation needs special code for the 'F'
+   directive. */
+/* #undef NEED_PRINTF_DIRECTIVE_F */
+
+/* Define if the vasnprintf implementation needs special code for the 'lc'
+   directive. */
+/* #undef NEED_PRINTF_DIRECTIVE_LC */
+
+/* Define if the vasnprintf implementation needs special code for the 'ls'
+   directive. */
+/* #undef NEED_PRINTF_DIRECTIVE_LS */
+
+/* Define if the vasnprintf implementation needs special code for 'double'
+   arguments. */
+#define NEED_PRINTF_DOUBLE 1
+
+/* Define if the vasnprintf implementation needs special code for surviving
+   out-of-memory conditions. */
+#define NEED_PRINTF_ENOMEM 1
+
+/* Define if the vasnprintf implementation needs special code for the # flag
+   with a zero precision and a zero value in the 'x' and 'X' directives. */
+/* #undef NEED_PRINTF_FLAG_ALT_PRECISION_ZERO */
+
+/* Define if the vasnprintf implementation needs special code for the ' flag.
+   */
+#define NEED_PRINTF_FLAG_GROUPING 1
+
+/* Define if the vasnprintf implementation needs special code for the ' flag,
+   for integer directives only. */
+/* #undef NEED_PRINTF_FLAG_GROUPING_INT */
+
+/* Define if the vasnprintf implementation needs special code for the '-'
+   flag. */
+/* #undef NEED_PRINTF_FLAG_LEFTADJUST */
+
+/* Define if the vasnprintf implementation needs special code for the 0 flag.
+   */
+/* #undef NEED_PRINTF_FLAG_ZERO */
+
+/* Define if the vasnprintf implementation needs special code for infinite
+   'double' arguments. */
+/* #undef NEED_PRINTF_INFINITE_DOUBLE */
+
+/* Define if the vasnprintf implementation needs special code for infinite
+   'long double' arguments. */
+/* #undef NEED_PRINTF_INFINITE_LONG_DOUBLE */
+
+/* Define if the vasnprintf implementation needs special code for 'long
+   double' arguments. */
+#define NEED_PRINTF_LONG_DOUBLE 1
+
+/* Define if the vasnprintf implementation needs special code for supporting
+   large precisions without arbitrary bounds. */
+/* #undef NEED_PRINTF_UNBOUNDED_PRECISION */
 
 /* Name of package */
 
@@ -502,17 +981,43 @@
 
 /* Define to the version of this package. */
 
+/* Define if the pthread_in_use() detection is hard. */
+/* #undef PTHREAD_IN_USE_DETECTION_HARD */
+
 /* Define to l, ll, u, ul, ull, etc., as suitable for constants of type
    'ptrdiff_t'. */
 /* #undef PTRDIFF_T_SUFFIX */
+
+/* Define if fprintf is overridden by a POSIX compliant gnulib implementation.
+   */
+#define REPLACE_FPRINTF_POSIX 1
 
 /* Define to 1 if stat needs help when passed a file name with a trailing
    slash */
 /* #undef REPLACE_FUNC_STAT_FILE */
 
+/* Define if vasnprintf exists but is overridden by gnulib. */
+/* #undef REPLACE_VASNPRINTF */
+
+/* Define if vfprintf is overridden by a POSIX compliant gnulib
+   implementation. */
+#define REPLACE_VFPRINTF_POSIX 1
+
+/* Define to 1 if setlocale (LC_ALL, NULL) is thread-safe. */
+#define SETLOCALE_NULL_ALL_MTSAFE 1
+
+/* Define to 1 if setlocale (category, NULL) is thread-safe. */
+#define SETLOCALE_NULL_ONE_MTSAFE 1
+
 /* Define to l, ll, u, ul, ull, etc., as suitable for constants of type
    'sig_atomic_t'. */
 /* #undef SIG_ATOMIC_T_SUFFIX */
+
+/* Define as the maximum value of type 'size_t', if the system doesn't define
+   it. */
+#ifndef SIZE_MAX
+/* # undef SIZE_MAX */
+#endif
 
 /* Define to l, ll, u, ul, ull, etc., as suitable for constants of type
    'size_t'. */
@@ -651,6 +1156,18 @@
    'wint_t'. */
 /* #undef WINT_T_SUFFIX */
 
+/* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
+   significant byte first (like Motorola and SPARC, unlike Intel). */
+#if defined AC_APPLE_UNIVERSAL_BUILD
+# if defined __BIG_ENDIAN__
+#  define WORDS_BIGENDIAN 1
+# endif
+#else
+# ifndef WORDS_BIGENDIAN
+/* #  undef WORDS_BIGENDIAN */
+# endif
+#endif
+
 /* Number of bits in a file offset, on hosts where this is settable. */
 #define _FILE_OFFSET_BITS 64
 
@@ -680,6 +1197,9 @@
 
 /* Define to 1 on platforms where this makes off_t a 64-bit type. */
 /* #undef _LARGE_FILES */
+
+/* Define to 1 on Solaris. */
+/* #undef _LCONV_C99 */
 
 /* Define so that AIX headers are more compatible with GNU/Linux. */
 #define _LINUX_SOURCE_COMPAT 1
@@ -1608,6 +2128,15 @@
 /* Define as 'int' if <sys/types.h> doesn't define. */
 #define gid_t int
 
+/* Define to '__inline__' or '__inline' if that's what the C compiler
+   calls it, or to nothing if 'inline' is not supported under any name.  */
+#ifndef __cplusplus
+/* #undef inline */
+#endif
+
+/* Define to long or long long if <stdint.h> and <inttypes.h> don't define. */
+/* #undef intmax_t */
+
 /* Work around a bug in Apple GCC 4.0.1 build 5465: In C99 mode, it supports
    the ISO C 99 semantics of 'extern inline' (unlike the GNU C semantics of
    earlier versions), but does not display it by setting __GNUC_STDC_INLINE__.
@@ -1617,6 +2146,9 @@
 #if defined __APPLE__ && defined __MACH__ && __APPLE_CC__ >= 5465 && !defined __cplusplus && __STDC_VERSION__ >= 199901L && !defined __GNUC_STDC_INLINE__
 # define __GNUC_STDC_INLINE__ 1
 #endif
+
+/* Define to a type if <wchar.h> does not define. */
+/* #undef mbstate_t */
 
 /* _GL_CMP (n1, n2) performs a three-valued comparison on n1 vs. n2, where
    n1 and n2 are expressions without side effects, that evaluate to real
@@ -1642,6 +2174,10 @@
 
 /* Define as a signed integer type capable of holding a process identifier. */
 /* #undef pid_t */
+
+/* Define as the type of the result of subtracting two pointers, if the system
+   doesn't define it. */
+/* #undef ptrdiff_t */
 
 /* Define to the equivalent of the C99 'restrict' keyword, or to
    nothing if this is not supported.  In particular it is not supported
@@ -1696,6 +2232,22 @@
 
 /* Define as 'int' if <sys/types.h> doesn't define. */
 #define uid_t int
+
+
+/* This definition is a duplicate of the one in unitypes.h.
+   It is here so that we can cope with an older version of unitypes.h
+   that does not contain this definition and that is pre-installed among
+   the public header files.  */
+# if defined __restrict \
+     || 2 < __GNUC__ + (95 <= __GNUC_MINOR__) \
+     || __clang_major__ >= 3
+#  define _UC_RESTRICT __restrict
+# elif 199901L <= __STDC_VERSION__ || defined restrict
+#  define _UC_RESTRICT restrict
+# else
+#  define _UC_RESTRICT
+# endif
+
 
 #if !(defined __cplusplus \
       ? 1 \

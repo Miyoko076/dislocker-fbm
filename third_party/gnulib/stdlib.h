@@ -877,8 +877,8 @@ _GL_CXXALIASWARN (abort);
 #endif
 
 
-#if 0
-# if 0
+#if 1
+# if 1
 #  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
 #   undef free
 #   define free rpl_free
@@ -938,7 +938,7 @@ _GL_CXXALIAS_SYS (aligned_alloc, void *, (size_t alignment, size_t size));
 _GL_CXXALIASWARN (aligned_alloc);
 # endif
 #else
-# if 0 \
+# if 1 \
      && (__GNUC__ >= 11 && !defined __clang__) && !defined aligned_alloc
 /* For -Wmismatched-dealloc: Associate aligned_alloc with free or rpl_free.  */
 #  if __GLIBC__ + (__GLIBC_MINOR__ >= 16) > 2
@@ -1013,7 +1013,7 @@ _GL_CXXALIAS_SYS (calloc, void *, (size_t nmemb, size_t size));
 _GL_CXXALIASWARN (calloc);
 # endif
 #else
-# if 0 \
+# if 1 \
      && (__GNUC__ >= 11 && !defined __clang__) && !defined calloc
 /* For -Wmismatched-dealloc: Associate calloc with free or rpl_free.  */
 #  if __GLIBC__ + (__GLIBC_MINOR__ >= 14) > 2
@@ -1070,7 +1070,7 @@ _GL_CXXALIAS_SYS (canonicalize_file_name, char *, (const char *name));
 # endif
 _GL_CXXALIASWARN (canonicalize_file_name);
 #else
-# if 0 \
+# if 1 \
      && (__GNUC__ >= 11 && !defined __clang__) && !defined canonicalize_file_name
 /* For -Wmismatched-dealloc: Associate canonicalize_file_name with free or
    rpl_free.  */
@@ -1322,7 +1322,7 @@ _GL_CXXALIAS_SYS (malloc, void *, (size_t size));
 _GL_CXXALIASWARN (malloc);
 # endif
 #else
-# if 0 \
+# if 1 \
      && (__GNUC__ >= 11 && !defined __clang__) && !defined malloc
 /* For -Wmismatched-dealloc: Associate malloc with free or rpl_free.  */
 #  if __GLIBC__ + (__GLIBC_MINOR__ >= 14) > 2
@@ -2094,7 +2094,7 @@ _GL_CXXALIAS_SYS (realloc, void *, (void *ptr, size_t size));
 _GL_CXXALIASWARN (realloc);
 # endif
 #else
-# if 0 \
+# if 1 \
      && (__GNUC__ >= 11 && !defined __clang__) && !defined realloc
 /* For -Wmismatched-dealloc: Associate realloc with free or rpl_free.  */
 #  if __GLIBC__ + (__GLIBC_MINOR__ >= 14) > 2

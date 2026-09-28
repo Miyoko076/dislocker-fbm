@@ -727,8 +727,8 @@ _GL_WARN_EXTERN_C int _gl_warn_on_use
 
 /* Make _GL_ATTRIBUTE_DEALLOC_FREE work, even though <stdlib.h> may not have
    been included yet.  */
-#if 0
-# if (0 && !defined free \
+#if 1
+# if (1 && !defined free \
       && !(defined __cplusplus && defined GNULIB_NAMESPACE))
 /* We can't do '#define free rpl_free' here.  */
 #  if defined __cplusplus && (__GLIBC__ + (__GLIBC_MINOR__ >= 14) > 2)
@@ -928,7 +928,7 @@ _GL_CXXALIASWARN (memccpy);
 
 
 /* Return the first instance of C within N bytes of S, or NULL.  */
-#if 0
+#if 1
 # if 0
 #  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
 #   undef memchr
@@ -967,7 +967,7 @@ _GL_WARN_ON_USE_CXX (memchr,
 #endif
 
 /* Are S1 and S2, of size N, bytewise equal?  */
-#if 0 && !0
+#if 1 && !0
 # if !GNULIB_defined_memeq
 #  ifdef __cplusplus
 extern "C" {
@@ -1900,7 +1900,7 @@ _GL_CXXALIASWARN (mbslen);
 # endif
 #endif
 
-#if 0
+#if 1
 /* Return the number of multibyte characters in the character string starting
    at STRING and ending at STRING + LEN.  */
 _GL_EXTERN_C size_t mbsnlen (const char *string, size_t len)
