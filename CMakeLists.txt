@@ -20,6 +20,12 @@
 cmake_minimum_required (VERSION 3.5)
 project (dislocker C)
 
+if(CMAKE_HOST_WIN32 AND MINGW)
+	if(NOT CMAKE_GENERATOR STREQUAL "MSYS Makefiles")
+		message(FATAL_ERROR "MinGW builds on Windows require: cmake -G \"MSYS Makefiles\"")
+	endif()
+endif()
+
 set (AUTHOR "Romain Coltel")
 
 find_program (GIT_EXE NAMES git PATHS /usr/bin /usr/local/bin)
