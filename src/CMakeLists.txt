@@ -199,6 +199,23 @@ endif()
 string (TOLOWER "${CMAKE_SYSTEM_NAME}" SYSNAME)
 set (DIS_MAN ${PROJECT_SOURCE_DIR}/man/${SYSNAME})
 
+# Gzip a man page after TARGET is built, resolving symlinks through git.
+function(dis_man_gz TARGET SRC OUT)
+	if(GIT_EXE AND EXISTS ${PROJECT_SOURCE_DIR}/.git)
+		file (RELATIVE_PATH REL ${PROJECT_SOURCE_DIR} ${SRC})
+		add_custom_command (TARGET ${TARGET} POST_BUILD
+			COMMAND sh -c [=[git=$1 src=$2 out=$3; mkdir -p "$(dirname "$out")" && rm -f "$out" || exit 1; tree=$("$git" stash create 2>/dev/null); [ -n "$tree" ] || tree=HEAD; hash=$(printf '%s\n' "$tree:$src" | "$git" cat-file --batch-check='%(objectname)' --follow-symlinks); case $hash in ""|*[!0-9a-f]*) echo "man: $src: $hash" >&2; exit 1;; esac; "$git" cat-file blob "$hash" | gzip -cn > "$out"]=] _ "${GIT_EXE}" "${REL}" "${OUT}"
+			WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+			VERBATIM)
+	else()
+		add_custom_command (TARGET ${TARGET} POST_BUILD
+			COMMAND mkdir -p ${CMAKE_BINARY_DIR}/man/
+			COMMAND gzip -c ${SRC} > ${OUT}
+		)
+	endif()
+	set (CLEAN_FILES ${CLEAN_FILES} ${OUT} PARENT_SCOPE)
+endfunction()
+
 # RPATH handling
 if(POLICY CMP0042)
 	cmake_policy (SET CMP0042 NEW)
@@ -283,11 +300,7 @@ if(FUSE_FOUND)
 	target_link_libraries (${BIN_FUSE} PRIVATE ${FUSE_LIBBRARIES} ${LIB} ${PROJECT_NAME})
 	set_target_properties (${BIN_FUSE} PROPERTIES COMPILE_DEFINITIONS FUSE_USE_VERSION=314)
 	set_target_properties (${BIN_FUSE} PROPERTIES LINK_FLAGS "-pie -fPIE")
-	add_custom_command (TARGET ${BIN_FUSE} POST_BUILD
-		COMMAND mkdir -p ${CMAKE_BINARY_DIR}/man/
-		COMMAND gzip -c ${DIS_MAN}/${BIN_FUSE}.1 > ${CMAKE_BINARY_DIR}/man/${BIN_FUSE}.1.gz
-	)
-	set (CLEAN_FILES ${CLEAN_FILES} ${CMAKE_BINARY_DIR}/man/${BIN_FUSE}.1.gz)
+	dis_man_gz (${BIN_FUSE} ${DIS_MAN}/${BIN_FUSE}.1 ${CMAKE_BINARY_DIR}/man/${BIN_FUSE}.1.gz)
 	install (TARGETS ${BIN_FUSE} RUNTIME DESTINATION "${bindir}")
 	install (FILES ${CMAKE_BINARY_DIR}/man/${BIN_FUSE}.1.gz DESTINATION "${mandir}/man1")
 	install (CODE "execute_process (COMMAND ${CMAKE_COMMAND} -E create_symlink ${BIN_FUSE} \"\$ENV{DESTDIR}${bindir}/${PROJECT_NAME}\")")
@@ -301,11 +314,7 @@ if(RUBY_FOUND)
 	target_link_libraries (${BIN_FILE} ${RUBY_LIBRARY})
 endif()
 set_target_properties (${BIN_FILE} PROPERTIES LINK_FLAGS "-pie -fPIE")
-add_custom_command (TARGET ${BIN_FILE} POST_BUILD
-	COMMAND mkdir -p ${CMAKE_BINARY_DIR}/man/
-	COMMAND gzip -c ${DIS_MAN}/${BIN_FILE}.1 > ${CMAKE_BINARY_DIR}/man/${BIN_FILE}.1.gz
-)
-set (CLEAN_FILES ${CLEAN_FILES} ${CMAKE_BINARY_DIR}/man/${BIN_FILE}.1.gz)
+dis_man_gz (${BIN_FILE} ${DIS_MAN}/${BIN_FILE}.1 ${CMAKE_BINARY_DIR}/man/${BIN_FILE}.1.gz)
 install (TARGETS ${BIN_FILE} RUNTIME DESTINATION "${bindir}")
 install (FILES ${CMAKE_BINARY_DIR}/man/${BIN_FILE}.1.gz DESTINATION "${mandir}/man1")
 
@@ -336,11 +345,7 @@ if(RUBY_FOUND)
 		SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/${BIN_FIND}.rb"
 	)
 	set (CLEAN_FILES ${CLEAN_FILES} ${CMAKE_CURRENT_BINARY_DIR}/${BIN_FIND})
-	add_custom_command (TARGET ${BIN_FIND} POST_BUILD
-		COMMAND mkdir -p ${CMAKE_BINARY_DIR}/man/
-		COMMAND gzip -c ${DIS_MAN}/${BIN_FIND}.1 > ${CMAKE_BINARY_DIR}/man/${BIN_FIND}.1.gz
-	)
-	set (CLEAN_FILES ${CLEAN_FILES} ${CMAKE_BINARY_DIR}/man/${BIN_FIND}.1.gz)
+	dis_man_gz (${BIN_FIND} ${DIS_MAN}/${BIN_FIND}.1 ${CMAKE_BINARY_DIR}/man/${BIN_FIND}.1.gz)
 	install (PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/${BIN_FIND} DESTINATION "${bindir}")
 	install (FILES ${CMAKE_BINARY_DIR}/man/${BIN_FIND}.1.gz DESTINATION "${mandir}/man1")
 else()
