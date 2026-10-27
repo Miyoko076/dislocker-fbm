@@ -335,6 +335,7 @@ if(DIS_CYGWIN)
 		__getopt_initialized=dis_gnu_getopt_initialized
 		optarg=dis_gnu_optarg optind=dis_gnu_optind
 		opterr=dis_gnu_opterr optopt=dis_gnu_optopt)
+	target_link_libraries (${BIN_METADATA} gnugetopt)
 	target_link_libraries (${BIN_BEK} gnugetopt)
 endif()
 

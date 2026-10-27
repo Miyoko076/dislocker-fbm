@@ -26,7 +26,7 @@
 
 #define _GNU_SOURCE 1
 
-#include <getopt.h>
+#include "dislocker/xstd/xgetopt.h"
 #include <locale.h>
 #include <sys/types.h>
 #include <sys/stat.h>
