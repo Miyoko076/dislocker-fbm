@@ -24,7 +24,7 @@
  * Testing BEK files reading and parsing
  */
 
-#include <getopt.h>
+#include "dislocker/xstd/xgetopt.h"
 
 #include <unistd.h>
 #include <sys/types.h>

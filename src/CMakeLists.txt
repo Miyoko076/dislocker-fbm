@@ -314,6 +314,30 @@ endif()
 set_target_properties (${BIN_BEK} PROPERTIES LINK_FLAGS "-pie -fPIE")
 install (TARGETS ${BIN_BEK} RUNTIME DESTINATION "${bindir}")
 
+# Cygwin's getopt() doesn't permute argv like glibc's: build GNU getopt from
+# MSYS2's gengetopt sources, under dis_gnu_* names (dislocker/xstd/xgetopt.h)
+if(DIS_CYGWIN)
+	find_path (GNU_GETOPT_DIR NAMES getopt.c getopt1.c gnugetopt.h
+		PATHS /usr/share/gengetopt NO_DEFAULT_PATH
+		DOC "GNU getopt sources of MSYS2's gengetopt package")
+	if(NOT GNU_GETOPT_DIR)
+		message (FATAL_ERROR "GNU getopt sources not found. Install them with: pacman -S gengetopt, or set GNU_GETOPT_DIR")
+	endif()
+	configure_file (${GNU_GETOPT_DIR}/gnugetopt.h ${CMAKE_CURRENT_BINARY_DIR}/gnugetopt/getopt.h COPYONLY)
+	add_library (gnugetopt STATIC ${GNU_GETOPT_DIR}/getopt.c ${GNU_GETOPT_DIR}/getopt1.c)
+	target_include_directories (gnugetopt PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/gnugetopt)
+	# K&R definitions, not C23
+	target_compile_options (gnugetopt PRIVATE -std=gnu17 -w)
+	target_compile_definitions (gnugetopt PRIVATE HAVE_STRING_H
+		getopt=dis_gnu_getopt getopt_long=dis_gnu_getopt_long
+		getopt_long_only=dis_gnu_getopt_long_only
+		_getopt_internal=dis_gnu_getopt_internal
+		__getopt_initialized=dis_gnu_getopt_initialized
+		optarg=dis_gnu_optarg optind=dis_gnu_optind
+		opterr=dis_gnu_opterr optopt=dis_gnu_optopt)
+	target_link_libraries (${BIN_BEK} gnugetopt)
+endif()
+
 if(RUBY_FOUND)
 	set (BIN_FIND ${PROJECT_NAME}-find)
 	configure_file ("${CMAKE_CURRENT_SOURCE_DIR}/${BIN_FIND}.rb.in" "${CMAKE_CURRENT_SOURCE_DIR}/${BIN_FIND}.rb" ESCAPE_QUOTES @ONLY)
