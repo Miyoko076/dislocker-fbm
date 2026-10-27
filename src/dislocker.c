@@ -57,12 +57,12 @@
 
 
 /*
- * On Darwin and FreeBSD, files are opened using 64 bits offsets/variables
- * and O_LARGEFILE isn't defined
+ * On Darwin, FreeBSD, Cygwin and MSYS, files are opened using 64 bits
+ * offsets/variables and O_LARGEFILE isn't defined
  */
-#if defined(__DARWIN) || defined(__FREEBSD)
+#if defined(__DARWIN) || defined(__FREEBSD) || defined(__CYGWIN) || defined(__MSYS)
 #  define O_LARGEFILE 0
-#endif /* __DARWIN || __FREEBSD */
+#endif /* __DARWIN || __FREEBSD || __CYGWIN || __MSYS */
 
 
 

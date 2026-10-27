@@ -38,9 +38,9 @@
 #include "dislocker/common.h"
 #include "dislocker/dislocker.h"
 
-#if defined(__DARWIN) || defined(__FREEBSD)
+#if defined(__DARWIN) || defined(__FREEBSD) || defined(__CYGWIN) || defined(__MSYS)
 #  define O_LARGEFILE 0
-#endif /* __DARWIN || __FREEBSD */
+#endif /* __DARWIN || __FREEBSD || __CYGWIN || __MSYS */
 
 
 /* Number of sectors we're reading at a time */
