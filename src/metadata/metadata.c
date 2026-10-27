@@ -1004,6 +1004,7 @@ static int get_metadata_lazy_checked(
 	unsigned char current = 0;
 	unsigned int  metadata_crc32 = 0;
 	off_t         validations_offset = 0;
+	int           metadata_crc32_valid = FALSE;
 	bitlocker_validations_t validations;
 
 	/* If the user wants a specific metadata block */
@@ -1088,13 +1089,21 @@ static int get_metadata_lazy_checked(
 		if(metadata_crc32 == validations.crc32)
 		{
 			dis_printf(L_DEBUG, "We have a winner (n°%d)!\n", current);
+			metadata_crc32_valid = TRUE;
 			break;
 		}
 		else
+		{
 			dis_free(*metadata);
+			*metadata = NULL;
+		}
 	}
 
-	if(current > 3)
+	/*
+	 * Was: if(current > 3), never true since the loop stops at 3. current
+	 * is 3 both when the third copy passed and when all three failed.
+	 */
+	if(!metadata_crc32_valid)
 		return FALSE;
 
 	return TRUE;
