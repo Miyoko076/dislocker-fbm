@@ -84,6 +84,10 @@ endif()
 
 set (CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -D DEBUG=${DEBUG} -D__DIS_CORE_DUMPS")
 
+# Cygwin and MSYS produce PE binaries, but CMake doesn't set WIN32 for them
+if("${CMAKE_SYSTEM_NAME}" MATCHES "^(CYGWIN|MSYS)")
+	set (DIS_CYGWIN TRUE)
+endif()
 
 if("${CMAKE_SYSTEM_NAME}" STREQUAL "Darwin")
 	# Don't use `-read_only_relocs' here as it seems to only work for 32 bits
@@ -96,11 +100,19 @@ else()
 	set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wconversion")
 	if("${CMAKE_SYSTEM_NAME}" STREQUAL "FreeBSD")
 		link_directories ( ${LINK_DIRECTORIES} /usr/local/lib )
+	elseif(DIS_CYGWIN)
+		# Library for libiconv
+		set (LIB ${LIB} iconv)
 	endif()
 endif()
 
 if(${CMAKE_COMPILER_IS_GNUCC})
-	set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wl,-z,now -Wl,-z,relro")
+	if(DIS_CYGWIN)
+		# -z is ELF-only, and PE needs no equivalent: imports are bound at load
+		# time, and GNU ld >= 2.44 keeps the import address table read-only.
+	else()
+		set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wl,-z,now -Wl,-z,relro")
+	endif()
 elseif("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang")
 	set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Qunused-arguments")
 else()
@@ -180,7 +192,12 @@ if(NOT DEFINED bindir)
 	set(bindir "${CMAKE_INSTALL_PREFIX}/bin")
 endif()
 
-string (TOLOWER "${CMAKE_SYSTEM_NAME}" SYSNAME)
+if(DIS_CYGWIN)
+	# Same /dev/sdX device names as on Linux
+	set (SYSNAME linux)
+else()
+	string (TOLOWER "${CMAKE_SYSTEM_NAME}" SYSNAME)
+endif()
 set (DIS_MAN ${PROJECT_SOURCE_DIR}/man/${SYSNAME})
 
 # Gzip a man page after TARGET is built, reading it through git and dropping
