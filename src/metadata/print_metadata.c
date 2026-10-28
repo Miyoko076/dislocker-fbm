@@ -202,7 +202,7 @@ void print_eow_infos(DIS_LOGS level, dis_metadata_t dis_meta)
 
 	dis_printf(level, "  Number of regions: %u\n", eow_infos->nb_regions);
 	dis_printf(level, "  Crc32: %x\n", eow_infos->crc32);
-	dis_printf(level, "  On-disk offsets: %#" PRIx64 "\n", eow_infos->disk_offsets);
+	dis_printf(level, "  On-disk offsets: %#" PRIx64 "\n", eow_infos->disk_offsets[0]);
 	dis_printf(level, "=============================================================================\n");
 }
 
