@@ -1135,6 +1135,7 @@ static int get_eow_check_valid(
 	unsigned int  computed_crc32 = 0;
 	off_t         curr_offset = 0;
 	int           payload_size = 0;
+	int           eow_infos_crc32_valid = FALSE;
 
 	unsigned char* crc_temp_buffer;
 
@@ -1161,6 +1162,7 @@ static int get_eow_check_valid(
 		if(eow_infos_hdr->infos_size <= eow_infos_hdr->header_size)
 		{
 			dis_free(*eow_infos);
+			*eow_infos = NULL;
 			continue;
 		}
 
@@ -1170,6 +1172,7 @@ static int get_eow_check_valid(
 			|| eow_infos_hdr->nb_regions != (uint32_t)(payload_size >> 3))
 		{
 			dis_free(*eow_infos);
+			*eow_infos = NULL;
 			continue;
 		}
 
@@ -1188,15 +1191,21 @@ static int get_eow_check_valid(
 		if(computed_crc32 == eow_infos_hdr->crc32)
 		{
 			dis_printf(L_DEBUG, "We have a winner (n°%d)!\n", current);
+			eow_infos_crc32_valid = TRUE;
 			break;
 		}
 		else
 		{
 			dis_free(*eow_infos);
+			*eow_infos = NULL;
 		}
 	}
 
-	if(current == 2)
+	/*
+	 * Was: if(current == 2). current is 2 both when the second copy passed
+	 * and when both failed.
+	 */
+	if(!eow_infos_crc32_valid)
 		return FALSE;
 
 	return TRUE;
