@@ -169,6 +169,8 @@ int main(int argc, char** argv)
 
 	/* Get command line options */
 	param_idx = dis_getopts(dis_ctx, argc, argv);
+	if (param_idx == -1)
+		exit(EXIT_FAILURE);
 
 	/* Initialize dislocker */
 	if(dis_initialize(dis_ctx) == EXIT_FAILURE)
