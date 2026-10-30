@@ -482,7 +482,7 @@ static int check_volume_header(dis_metadata_t dis_meta, int volume_fd, off_t dis
 		dis_printf(L_INFO, "Volume has EOW_INFORMATION_OFFSET_GUID.\n");
 
 		// First: get the EOW informations no matter what
-		off_t source = (off_t) volume_header->eow_information_off[0];
+		off_t source = (off_t) volume_header->eow_information_off[0] + disk_offset;
 		void* eow_infos = NULL;
 
 		if(get_eow_information(source, &eow_infos, volume_fd))
